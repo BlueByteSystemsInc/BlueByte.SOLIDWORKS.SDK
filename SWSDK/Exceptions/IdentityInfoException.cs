@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SWSDK
+namespace BlueByte.SOLIDWORKS.SDK.Exceptions
 {
     [Serializable]
     public class IdentityInfoException : Exception

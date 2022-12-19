@@ -1,0 +1,114 @@
+﻿using SolidWorks.Interop.swconst;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
+{
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class MenuItemAttribute : Attribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MenuItemAttribute"/> class.
+        /// </summary>
+        /// <param name="callback">The callback.</param>
+        /// <param name="menuText">The menu text.</param>
+        /// <param name="docTypes">The document types.</param>
+        /// <param name="isItem">True if the item is a menu item, false, if it is a menu item</param>
+        public MenuItemAttribute(string callback, string menuText, swDocumentTypes_e docTypes, bool isItem = true)
+        {
+            this.Text = menuText;
+            this.DocumentType = docTypes;
+            this.Callback = callback;
+            this.IsMenuItem = isItem;
+        }
+
+        #region properties 
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is menu item.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is menu item; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsMenuItem { get; set; }
+
+        /// <summary>
+        /// Document type to which to add the menu item as defined by swDocumentTypes_e.
+        /// </summary>
+        /// <value>
+        /// The type of the document.
+        /// </value>
+        public swDocumentTypes_e DocumentType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the menu item. Menu item string ( e.g., "menuItem@menuString"); SOLIDWORKS creates menu items only if they do not already exist
+        /// </summary>
+        /// <value>
+        /// The menu item.
+        /// </value>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <listheader>
+        /// <term>Note</term>
+        /// </listheader>   
+        /// <term>
+        /// Specify the name of the menu for menuString (e.g., File, View, etc.) where you want your menu item to appear. If you do not specify menu string, then the menu item appears on the Tools menu below the Xpress Products menu item.
+        /// </term>
+        /// <term>
+        /// Use the & symbol to include an accelerator key, e.g., MyItem@, adds MyItem to the File menu with an accelerator key. To display the accelerator key, press the Alt key. The accelerator key is underlined.
+        /// </term>
+        /// </list>
+        /// </remarks>
+        public string Text { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the position. Position where to add the new menu item; the first item is position 0; if -1 is specified for Position, then the new menu item is added to the bottom of the list; this argument specifies the position of the menu item in relation to its immediate parent menu.
+        /// </summary>
+        /// <value>
+        /// The position.
+        /// </value>
+        public int Position { get; set; } = -1;
+
+
+
+        /// <summary>
+        /// Gets or sets the callback.
+        /// </summary>
+        /// <value>
+        /// The callback.
+        /// </value>
+        public string Callback { get; set; }
+
+        /// <summary>
+        /// Gets or sets the method that enables the state of the menu.
+        /// </summary>
+        /// <value>
+        /// The state of the menu enable.
+        /// </value>
+        public string MenuEnableState { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the hint.
+        /// </summary>
+        /// <value>
+        /// The hint.
+        /// </value>
+        public string Hint { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image list. Array of strings for the paths for the image files for the menu item
+        /// </summary>
+        /// <value>
+        /// The image list.
+        /// </value>
+        public string ImageList { get; set; }
+
+        #endregion 
+
+
+   }
+}

@@ -1,0 +1,343 @@
+﻿using BlueByte.SOLIDWORKS.SDK.Attributes;
+using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
+using BlueByte.SOLIDWORKS.SDK.Diagnostics;
+using Microsoft.Win32;
+using SimpleInjector;
+using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swpublished;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+
+namespace BlueByte.SOLIDWORKS.SDK.Core
+{
+    /// <summary>
+    /// Base AddIn class.
+    /// </summary>
+    /// <seealso cref="SolidWorks.Interop.swpublished.ISwAddin" />
+    [ComVisible(true)]
+    public abstract class AddInBase : ISwAddin
+    {
+
+        #region fields 
+
+        BitmapHandler handler = new BitmapHandler();
+
+        #endregion 
+
+        #region properties 
+
+        /// <summary>
+        /// Gets the application.
+        /// </summary>
+        /// <value>
+        /// The application.
+        /// </value>
+        public SldWorks Application { get; private set; }
+
+        /// <summary>
+        /// Gets the cookie.
+        /// </summary>
+        /// <value>
+        /// The cookie.
+        /// </value>
+        public int Cookie { get; private set; }
+
+        /// <summary>
+        /// Gets the identity.
+        /// </summary>
+        /// <value>
+        /// The identity.
+        /// </value>
+        public Identity Identity { get; private set; }
+
+        /// <summary>
+        /// Gets the container.
+        /// </summary>
+        /// <value>
+        /// The container.
+        /// </value>
+        public Container Container { get; private set; }
+
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        /// <value>
+        /// The logger.
+        /// </value>
+        public ILogger  Logger { get; private set; }
+
+        /// <summary>
+        /// Sets the type of the logger to be used.
+        /// </summary>
+        public LoggerType_e LoggerType { get; set; }
+
+        #endregion        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddInBase"/> class.
+        /// </summary>
+        public AddInBase()
+        {
+            try
+            {
+
+                this.Identity = Identity.Get(this);
+
+                var thisAssembly = new FileInfo(this.GetType().Assembly.Location);
+
+                OnLoadAdditionalAssemblies(thisAssembly.Directory);
+
+                OnLoggerTypeChosen(LoggerType_e.File);
+
+                Initialize();
+
+               
+
+                if (IsInitialized == false)
+                    OnRegisterAdditionalTypes(Container);
+
+              
+                Logger = Container.GetInstance<ILogger>();
+
+                OnLoggerOutputSat(string.Empty);
+
+                IsInitialized = true;
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+
+
+        }
+
+        /// <summary>
+        /// Sets the output folder of the logger.
+        /// </summary>
+        /// <param name="defaultDirectory"></param>
+        protected virtual void OnLoggerOutputSat(string defaultDirectory)
+        {
+            if (Container != null)
+            {
+                if (LoggerType == LoggerType_e.File)
+                    if (Logger != null)
+                        Logger.OutputLocation = defaultDirectory;
+            }
+        }
+
+
+        /// <summary>
+        /// Registers additional types.
+        /// </summary>
+        /// <param name="container"></param>
+        protected virtual void OnRegisterAdditionalTypes(Container container)
+        {
+        }
+
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is initialized.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is initialized; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsInitialized { get; private set; }
+
+        /// <summary>
+        /// Initializes task (Registers types and creates logger).
+        /// </summary>
+        public virtual void Initialize()
+        {
+            if (IsInitialized == false)
+            {
+                RegisterTypes();
+            }
+        }
+        /// <summary>
+        /// Sets the type of the logger.
+        /// </summary>
+        /// <param name="defaultType"></param>
+        protected virtual void OnLoggerTypeChosen(LoggerType_e defaultType)
+        {
+            LoggerType = defaultType;
+        }
+        /// <summary>
+        /// Load assemblies that failed loading.
+        /// </summary>
+        /// <param name="addinDirectory">Directory of the add-in.</param>
+        protected virtual void OnLoadAdditionalAssemblies(DirectoryInfo addinDirectory)
+        {
+        }
+
+        /// <summary>
+        /// Connects to solidworks.
+        /// </summary>
+        /// <param name="swApp">The sw application.</param>
+        protected virtual void ConnectToSOLIDWORKS(SldWorks swApp)
+        {
+
+        }
+
+        int[] menuIds = default(int[]);
+
+        private void BuildMenu()
+        {
+            var menuItems = AttributeHelper.GetAttributes<MenuItemAttribute>(this);
+            if (menuItems != null)
+            {
+
+                var menuIdsList = new List<int>();
+
+                foreach (var menu in menuItems)
+                {
+                    #region save images locally 
+
+                    var imagePath = string.Empty;
+
+   
+
+                    if (string.IsNullOrWhiteSpace(menu.ImageList) == false)
+                        imagePath = handler.CreateFileFromResourceBitmap(menu.ImageList, this.GetType().Assembly);
+
+                    #endregion 
+
+
+                    if (menu.IsMenuItem)
+                        menuIdsList.Add(Application.AddMenu((int)menu.DocumentType, menu.Text, menu.Position));
+                    else
+                        menuIdsList.Add(Application.AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath));
+                    
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Fires when the application is initialized. Register types of calling assembly.
+        /// </summary>
+        private void RegisterTypes()
+        {
+            if (Container == null)
+            {
+                Container = new Container();
+
+                var assembly = Assembly.GetCallingAssembly();
+
+                switch (LoggerType)
+                {
+                    case LoggerType_e.Console:
+                        Container.RegisterSingleton<ILogger, ConsoleLogger>();
+                        break;
+
+                    case LoggerType_e.File:
+                        Container.RegisterSingleton<ILogger, FileLogger>();
+                        break;
+
+                    case LoggerType_e.SQL:
+                        Container.RegisterSingleton<ILogger, SQLLogger>();
+                        break;
+                        throw new Exceptions.SOLIDWORKSSDKException("Logger type was not specified.", null);
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+        #region com registration
+
+        [ComRegisterFunction]
+        private static void RegisterAssembly(Type t)
+        {
+            try
+            {
+                var instance = Activator.CreateInstance(t);
+                var identity = Identity.Get(instance);
+
+                const string AddInFormat = @"SOFTWARE\SolidWorks\AddIns\{0:b}";
+                string keyPath = string.Format(AddInFormat, t.GUID);
+                RegistryKey rk = Registry.LocalMachine.CreateSubKey(keyPath);
+                rk.SetValue("Title", identity.Name);
+                rk.SetValue("Description", identity.Description);
+                rk.SetValue("StartUp", identity.Enabled ? 1 : 0);
+            }
+            catch (Exception ex)
+            {
+     
+            }
+        }
+
+        [ComUnregisterFunction]
+        private static void UnregisterAssembly(Type t)
+        {
+            try
+            {
+                bool doesExist = false;
+                const string AddInFormat = @"SOFTWARE\SolidWorks\AddIns\{0:b}";
+                string keyPath = string.Format(AddInFormat, t.GUID);
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath))
+                {
+                    doesExist = key == null ? false : true;
+                }
+                if (doesExist) Registry.LocalMachine.DeleteSubKey(keyPath);
+            }
+            catch (Exception ex)
+            {
+             
+            }
+        }
+
+        #endregion
+
+
+        public bool ConnectToSW(object ThisSW, int Cookie)
+        {
+            try
+            {
+                this.Application = ThisSW as SldWorks;
+
+                this.Cookie = Cookie;
+
+
+                // enable menu callbacks
+                this.Application.SetAddinCallbackInfo2(0, this, Cookie);
+
+                
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+            return true;
+        }
+        public bool DisconnectFromSW()
+        {
+            try
+            {
+                DestroyMenus();
+
+                handler.CleanFiles();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return true;
+        }
+
+        private void DestroyMenus()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+

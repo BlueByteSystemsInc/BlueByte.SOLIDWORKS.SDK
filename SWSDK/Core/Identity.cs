@@ -1,6 +1,6 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Attributes;
 
-namespace SWSDK
+namespace BlueByte.SOLIDWORKS.SDK.Core
 {
     public struct Identity
     {

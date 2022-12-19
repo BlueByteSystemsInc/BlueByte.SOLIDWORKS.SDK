@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SWSDK
+namespace BlueByte.SOLIDWORKS.SDK.Attributes
 {
     public static class AttributeHelper
     {
