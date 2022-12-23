@@ -83,6 +83,7 @@
     <Compile Include="Diagnostics\SQLLogger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="package.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

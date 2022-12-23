@@ -67,13 +67,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SWSDK\SWSDK.csproj">
-      <Project>{82771fab-c3c4-4106-8de0-ebbfeec7b204}</Project>
-      <Name>SWSDK</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\SWSDK\BlueByte.SOLIDWORKS.SDK.csproj">
+      <Project>{82771fab-c3c4-4106-8de0-ebbfeec7b204}</Project>
+      <Name>BlueByte.SOLIDWORKS.SDK</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

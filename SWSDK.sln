@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32428.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSDK", "SWSDK\SWSDK.csproj", "{82771FAB-C3C4-4106-8DE0-EBBFEEC7B204}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueByte.SOLIDWORKS.SDK", "SWSDK\BlueByte.SOLIDWORKS.SDK.csproj", "{82771FAB-C3C4-4106-8DE0-EBBFEEC7B204}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSDK.TestAddIn", "SWSDK.TestAddIn\SWSDK.TestAddIn.csproj", "{05381A48-E2B4-4DB3-AEFE-CC9D3E303272}"
 EndProject
