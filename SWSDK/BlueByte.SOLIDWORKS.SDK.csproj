@@ -63,8 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\Menus\MenuItem.cs" />
     <Compile Include="Attributes\Menus\PopupMenuItem.cs" />
+    <Compile Include="Attributes\Menus\MenuItem.cs" />
     <Compile Include="Core\AddInBase.cs" />
     <Compile Include="Attributes\AttributeHelper.cs" />
     <Compile Include="Attributes\Description.cs" />

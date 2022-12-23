@@ -25,7 +25,7 @@ namespace BlueByte.TestAddIn
 
         public AddIn() : base()
         {
-            AttachDebugger();
+          
         }
     }
 }

@@ -208,8 +208,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         }
 
         Tuple<int, int, string, string>[] menuIds = default(Tuple<int, int, string,string>[]);
-
-        private void BuildMenu()
+       private void BuildMenu()
         {
             var menuIdsList = new List<Tuple<int, int, string, string>>();
             var menuItems = AttributeHelper.GetAttributes<MenuItemAttribute>(this);
@@ -242,6 +241,26 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
             menuIds = menuIdsList.ToArray();
+        }
+
+        Tuple<int, int, int, string, string, string>[] popMenuIds = default(Tuple<int, int, int, string, string, string>[]);
+        private void BuildPopMenu()
+        {
+            var menuIdsList = new List<Tuple<int, int, int, string, string, string>>();
+            var menuItems = AttributeHelper.GetAttributes<PopMenuItemAttribute>(this);
+            if (menuItems != null)
+            {
+
+
+
+                foreach (var menu in menuItems)
+                    menuIdsList.Add(new Tuple<int, int, int, string, string, string>(Application.AddMenuPopupItem3((int)menu.DocumentType, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Hint, menu.CustomNames),(int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
+
+                
+            }
+
+
+            popMenuIds = menuIdsList.ToArray();
         }
 
 
@@ -337,6 +356,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 BuildMenu();
+                BuildPopMenu();
+
 
 
             }
@@ -374,11 +395,22 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             {
                 var t = menuIds.ToList();
                 t.Reverse();
-                var reversedMenuIds = t.ToArray();
-
+                
                 foreach (var ts in t)
                     Application.RemoveMenu(ts.Item2, ts.Item3, ts.Item4);
                 
+            }
+
+            if (popMenuIds != null)
+            {
+                var t = popMenuIds.ToList();
+                t.Reverse();
+                
+                
+
+                foreach (var ts in t)
+                    Application.RemoveMenuPopupItem(ts.Item2, ts.Item3,ts.Item4, ts.Item5, ts.Item6,0);
+
             }
         }
     }
