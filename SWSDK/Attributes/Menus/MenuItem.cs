@@ -17,7 +17,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// <param name="menuText">The menu text.</param>
         /// <param name="docTypes">The document types.</param>
         /// <param name="isItem">True if the item is a menu item, false, if it is a menu item</param>
-        public MenuItemAttribute(string callback, string menuText, swDocumentTypes_e docTypes, bool isItem = true)
+        public MenuItemAttribute(string menuText, swDocumentTypes_e docTypes, bool isItem = true, string callback = "")
         {
             this.Text = menuText;
             this.DocumentType = docTypes;
@@ -100,12 +100,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         public string Hint { get; set; }
 
         /// <summary>
-        /// Gets or sets the image list. Array of strings for the paths for the image files for the menu item
+        /// Gets or sets the image list. Array of strings for the paths for the image files for the menu item. Add your bmps to the resources of the add-in project.
         /// </summary>
         /// <value>
         /// The image list.
         /// </value>
-        public string ImageList { get; set; }
+        public string BmpFileNameInResources { get; set; }
 
         #endregion 
 

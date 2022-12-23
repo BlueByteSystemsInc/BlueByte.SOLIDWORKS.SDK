@@ -7,9 +7,13 @@ using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core
 {
@@ -17,9 +21,31 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
     /// Base AddIn class.
     /// </summary>
     /// <seealso cref="SolidWorks.Interop.swpublished.ISwAddin" />
-    [ComVisible(true)]
     public abstract class AddInBase : ISwAddin
     {
+        /// <summary>
+        /// Attaches the debugger.
+        /// </summary>
+        public void AttachDebugger()
+        {
+            Process process = Process.GetCurrentProcess();
+            if (!Debugger.IsAttached)
+            {
+                var information = new StringBuilder();
+                information.AppendLine();
+                information.AppendLine($"Process name = { process.ProcessName}");
+                information.AppendLine($"Process Id   = { process.Id}");
+
+
+                if (MessageBox.Show($"Attach Debugger? {information.ToString()}", $"{Identity.Name}", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    Debugger.Launch();
+            }
+        }
+
+
+      
+
+
 
         #region fields 
 
@@ -180,15 +206,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
         }
 
-        int[] menuIds = default(int[]);
+        Tuple<int, int, string, string>[] menuIds = default(Tuple<int, int, string,string>[]);
 
         private void BuildMenu()
         {
+            var menuIdsList = new List<Tuple<int, int, string, string>>();
             var menuItems = AttributeHelper.GetAttributes<MenuItemAttribute>(this);
             if (menuItems != null)
             {
 
-                var menuIdsList = new List<int>();
+             
 
                 foreach (var menu in menuItems)
                 {
@@ -198,19 +225,22 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
    
 
-                    if (string.IsNullOrWhiteSpace(menu.ImageList) == false)
-                        imagePath = handler.CreateFileFromResourceBitmap(menu.ImageList, this.GetType().Assembly);
+                    if (string.IsNullOrWhiteSpace(menu.BmpFileNameInResources) == false)
+                        imagePath = handler.CreateFileFromResourceBitmap(menu.BmpFileNameInResources, this.GetType().Assembly);
 
                     #endregion 
 
 
                     if (menu.IsMenuItem)
-                        menuIdsList.Add(Application.AddMenu((int)menu.DocumentType, menu.Text, menu.Position));
+                        menuIdsList.Add(new Tuple<int, int,string,string>(Application.AddMenu((int)menu.DocumentType, menu.Text, menu.Position), (int)menu.DocumentType, menu.Text, string.Empty));
                     else
-                        menuIdsList.Add(Application.AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath));
+                        menuIdsList.Add(new Tuple<int, int, string, string>(Application.AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath),(int)menu.DocumentType, menu.Text, string.Empty));
                     
                 }
             }
+
+
+            menuIds = menuIdsList.ToArray();
         }
 
 
@@ -304,12 +334,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 // enable menu callbacks
                 this.Application.SetAddinCallbackInfo2(0, this, Cookie);
 
-                
+
+                BuildMenu();
+
+
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+                this.Application.SendMsgToUser($"{e.Message} {e.StackTrace}");
             }
 
 
@@ -336,7 +369,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
         private void DestroyMenus()
         {
-            throw new NotImplementedException();
+            if (menuIds != null)
+            {
+                var t = menuIds.ToList();
+                t.Reverse();
+                var reversedMenuIds = t.ToArray();
+
+                foreach (var ts in t)
+                    Application.RemoveMenu(ts.Item2, ts.Item3, ts.Item4);
+                
+            }
         }
     }
 }

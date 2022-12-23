@@ -1,4 +1,5 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Attributes;
+using BlueByte.SOLIDWORKS.SDK.Exceptions;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core
 {

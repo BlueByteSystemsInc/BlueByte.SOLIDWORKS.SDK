@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core
 {
-    public class BitmapHandler : IDisposable
+    internal class BitmapHandler : IDisposable
     {
         private ArrayList files;
 
