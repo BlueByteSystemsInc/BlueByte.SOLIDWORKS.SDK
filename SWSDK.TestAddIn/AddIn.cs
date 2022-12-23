@@ -11,9 +11,9 @@ namespace BlueByte.TestAddIn
     [Guid("BF1C1567-53D8-4E2B-B588-0518A1EBFA55")]
     [Name("Addin")]
     [Description("This is the description")]
-    [StartUp(false)]
+    [StartUp(true)]
     [MenuItem("SDK", swDocumentTypes_e.swDocNONE, true)]
-    [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocNONE, false, nameof(OnMenuClick))]
+    [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocNONE, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
     public class AddIn : AddInBase
     { 
 
@@ -22,5 +22,10 @@ namespace BlueByte.TestAddIn
             this.Application.SendMsgToUser("Hello World!");
         }
 
+
+        public AddIn() : base()
+        {
+            AttachDebugger();
+        }
     }
 }

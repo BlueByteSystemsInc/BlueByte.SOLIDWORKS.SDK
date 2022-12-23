@@ -11,18 +11,21 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
     public class MenuItemAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MenuItemAttribute"/> class.
+        /// Initializes a new instance of the <see cref="MenuItemAttribute" /> class.
         /// </summary>
-        /// <param name="callback">The callback.</param>
         /// <param name="menuText">The menu text.</param>
         /// <param name="docTypes">The document types.</param>
         /// <param name="isItem">True if the item is a menu item, false, if it is a menu item</param>
-        public MenuItemAttribute(string menuText, swDocumentTypes_e docTypes, bool isItem = true, string callback = "")
+        /// <param name="callback">The callback.</param>
+        /// <param name="bmpFileNameInResources">name of the bmp in the resources of the add-in project including the bmp extension.</param> 
+        /// <remarks>Add images to the project level and set their build action to embed resource. Size is 20x20, 32x32, 40x40, 64x64, 96x96 or 128x128</remarks>
+        public MenuItemAttribute(string menuText, swDocumentTypes_e docTypes, bool isItem = true, string callback = "", string bmpFileNameInResources = "")
         {
             this.Text = menuText;
             this.DocumentType = docTypes;
             this.Callback = callback;
             this.IsMenuItem = isItem;
+            this.BmpFileNameInResources = bmpFileNameInResources;
         }
 
         #region properties 
@@ -100,7 +103,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         public string Hint { get; set; }
 
         /// <summary>
-        /// Gets or sets the image list. Array of strings for the paths for the image files for the menu item. Add your bmps to the resources of the add-in project.
+        /// Gets or sets the image list. Array of strings for the paths for the image files for the menu item. Add your bmps to the resources of the add-in project. Add images to the project level and set their build action to embed resource. Size is 20x20, 32x32, 40x40, 64x64, 96x96 or 128x128.
         /// </summary>
         /// <value>
         /// The image list.

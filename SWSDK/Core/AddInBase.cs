@@ -21,6 +21,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
     /// Base AddIn class.
     /// </summary>
     /// <seealso cref="SolidWorks.Interop.swpublished.ISwAddin" />
+    [ComVisible(true)]
     public abstract class AddInBase : ISwAddin
     {
         /// <summary>

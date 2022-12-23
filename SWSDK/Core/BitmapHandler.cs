@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core
@@ -17,12 +18,41 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         public string CreateFileFromResourceBitmap(string bitmapName, Assembly callingAssy)
         {
             string tempFileName = Path.GetTempFileName();
+            tempFileName = Path.ChangeExtension(tempFileName, "bmp");
             Stream manifestResourceStream;
             Bitmap bitmap;
             try
             {
-                manifestResourceStream = callingAssy.GetManifestResourceStream(bitmapName);
-                bitmap = new Bitmap(manifestResourceStream);
+
+                var names = callingAssy.GetManifestResourceNames();
+                
+                if (names != null)
+                {
+                    var name = names.ToList().FirstOrDefault(x => x.EndsWith(bitmapName, StringComparison.OrdinalIgnoreCase));
+                    if (string.IsNullOrWhiteSpace(name) == false)
+                    {
+                        manifestResourceStream = callingAssy.GetManifestResourceStream(name);
+                        bitmap = new Bitmap(manifestResourceStream);
+
+                        try
+                        {
+                            bitmap.Save(tempFileName);
+                            this.files.Add((object)tempFileName);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+                        finally
+                        {
+                            bitmap.Dispose();
+                            manifestResourceStream.Close();
+                        }
+                    }
+
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -30,20 +60,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
                
             }
-            try
-            {
-                bitmap.Save(tempFileName);
-                this.files.Add((object)tempFileName);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                bitmap.Dispose();
-                manifestResourceStream.Close();
-            }
+
+            
             return tempFileName;
         }
 
