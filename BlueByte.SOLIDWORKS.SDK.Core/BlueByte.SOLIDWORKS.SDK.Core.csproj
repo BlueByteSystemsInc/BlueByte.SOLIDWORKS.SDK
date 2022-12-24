@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Documents\IAssembly.cs" />
     <Compile Include="Enums\DocumentAddOperationRet_e.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />

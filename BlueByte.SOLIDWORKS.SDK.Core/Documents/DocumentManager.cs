@@ -97,7 +97,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             var _document = Document.New(null, fileName);
             if (_document.DocumentType == swDocumentTypes_e.swDocASSEMBLY)
-                _document = new Assembly(null, fileName);
+                _document = new Document(null, fileName);
 
             if (_document.IsLoaded)
                 throw new Exception("Attempted to add a loaded document");
@@ -111,7 +111,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             _document.DettachEventHandlers();
             _document.AttachEventHandlers();
             _document.GotClosed += document_GotClosed;
-            DocumentManagerExtension.Add(Documents, _document);
+            //DocumentManagerExtension.Add(Documents, _document);
             return _document;
         }
 
@@ -204,11 +204,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 if (model.GetType() == (int)swDocumentTypes_e.swDocASSEMBLY)
                 {
-                    IAssembly assembly = new Assembly(model, model.GetPathName());
-                    assembly.DeattachEventHandlers();
+                    IAssembly assembly = new Document(model, model.GetPathName());
+                    assembly.DettachEventHandlers();
                     assembly.AttachEventHandlers();
                     assembly.GotClosed += document_GotClosed;
-                    DocumentManagerExtension.Add(Documents, assembly);
+                    //DocumentManagerExtension.Add(Documents, assembly);
                     retValue = DocumentAddOperationRet_e.Added;
                     retDocument = assembly;
                 }
@@ -218,7 +218,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     newDocument.DettachEventHandlers();
                     newDocument.AttachEventHandlers();
                     newDocument.GotClosed += document_GotClosed;
-                    DocumentManagerExtension.Add(Documents, newDocument);
+                    //DocumentManagerExtension.Add(Documents, newDocument);
                     retValue = DocumentAddOperationRet_e.Added;
                     retDocument = newDocument;
                 }
