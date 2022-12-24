@@ -1,6 +1,7 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Attributes;
 using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
 using BlueByte.SOLIDWORKS.SDK.Core;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -19,7 +20,8 @@ namespace BlueByte.TestAddIn
 
         public void OnMenuClick()
         {
-            this.Application.SendMsgToUser("Hello World!");
+            var app = Container.GetInstance<SldWorks>();
+            app.SendMsgToUser("Hello World!");
         }
 
 

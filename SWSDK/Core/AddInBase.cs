@@ -86,7 +86,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// <value>
         /// The container.
         /// </value>
-        public Container Container { get; private set; }
+        public static Container Container { get; private set; }
 
         /// <summary>
         /// Gets the logger.
@@ -112,25 +112,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
                 this.Identity = Identity.Get(this);
 
-                var thisAssembly = new FileInfo(this.GetType().Assembly.Location);
-
-                OnLoadAdditionalAssemblies(thisAssembly.Directory);
-
-                OnLoggerTypeChosen(LoggerType_e.File);
-
-                Initialize();
-
-               
-
-                if (IsInitialized == false)
-                    OnRegisterAdditionalTypes(Container);
-
-              
-                Logger = Container.GetInstance<ILogger>();
-
-                OnLoggerOutputSat(string.Empty);
-
-                IsInitialized = true;
             }
             catch (Exception e)
             {
@@ -138,6 +119,29 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             }
 
 
+        }
+
+        void Init()
+        {
+            var thisAssembly = new FileInfo(this.GetType().Assembly.Location);
+
+            OnLoadAdditionalAssemblies(thisAssembly.Directory);
+
+            OnLoggerTypeChosen(LoggerType_e.File);
+
+            Initialize();
+
+
+
+            if (IsInitialized == false)
+                OnRegisterAdditionalTypes(Container);
+
+
+            Logger = Container.GetInstance<ILogger>();
+
+            OnLoggerOutputSat(string.Empty);
+
+            IsInitialized = true;
         }
 
         /// <summary>
@@ -292,6 +296,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                     default:
                         break;
                 }
+
+                Container.RegisterInstance<SldWorks>(this.Application);
+
             }
         }
 
@@ -347,6 +354,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             try
             {
                 this.Application = ThisSW as SldWorks;
+                
+             
+       
+
+                Init();
 
                 this.Cookie = Cookie;
 
