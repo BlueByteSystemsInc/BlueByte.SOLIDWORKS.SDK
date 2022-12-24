@@ -1,0 +1,60 @@
+﻿using SolidWorks.Interop.swconst;
+using System;
+
+namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
+{
+    /// <summary>
+    /// Document object.
+    /// </summary>
+    /// <seealso cref="BlueByte.SOLIDWORKS.SDK.Core.ISOLIDWORKSObject" />
+    /// <seealso cref="System.IDisposable" />
+    public interface IDocument : ISOLIDWORKSObject, IDisposable
+    {
+        /// <summary>
+        /// Gets a value indicating whether this document is visible.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this document is visible; otherwise, <c>false</c>.
+        /// </value>
+        bool IsVisible { get; }
+
+        /// <summary>
+        /// Gets the name of the file.
+        /// </summary>
+        /// <value>
+        /// The name of the file.
+        /// </value>
+        string FileName { get;   }
+
+        /// <summary>
+        /// Gets a value indicating whether this document is loaded.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this document is loaded; otherwise, <c>false</c>.
+        /// </value>
+        bool IsLoaded { get;   }
+
+        event EventHandler<swDestroyNotifyType_e> GotClosed;
+
+        /// <summary>
+        /// Attaches the event handlers.
+        /// </summary>
+        void AttachEventHandlers();
+
+        /// <summary>
+        /// Loads the specified unsafe object.
+        /// </summary>
+        /// <param name="UnsafeObject">The unsafe object.</param>
+        void Load(object UnsafeObject);
+
+        /// <summary>
+        /// Dettaches the event handlers.
+        /// </summary>
+        void DettachEventHandlers();
+
+        /// <summary>
+        /// Refreshes this document.
+        /// </summary>
+        void Refresh();
+    }
+}

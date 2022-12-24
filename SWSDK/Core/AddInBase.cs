@@ -1,5 +1,6 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Attributes;
 using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
+using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.Diagnostics;
 using Microsoft.Win32;
 using SimpleInjector;
@@ -298,6 +299,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 }
 
                 Container.RegisterInstance<SldWorks>(this.Application);
+                Container.RegisterSingleton<IDocumentManager, DocumentManager>();
 
             }
         }
