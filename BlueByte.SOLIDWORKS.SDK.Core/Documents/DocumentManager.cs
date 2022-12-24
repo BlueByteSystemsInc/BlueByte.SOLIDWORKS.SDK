@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
-    public class DocumentManager : IDocumentManager, IDisposable
+    internal class DocumentManager : IDocumentManager, IDisposable
     {
         #region Public Events
 
@@ -23,7 +23,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public ObservableCollection<IDocument> Documents { get; set; } = new ObservableCollection<IDocument>();
 
-        public SldWorks SwApp { get; }
+        internal SldWorks SwApp { get; }
 
         #endregion
 
@@ -70,7 +70,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             var documentType = (swDocumentTypes_e)DocType;
             if (documentType == swDocumentTypes_e.swDocASSEMBLY || documentType == swDocumentTypes_e.swDocPART)
             {
-                var retAdd = swModelAsIDocument(NewDoc as ModelDoc2);
+                var retAdd = GetDocumentFromUnsafeObject(NewDoc as ModelDoc2);
                 if (DocumentGotCreated != null)
                     DocumentGotCreated(this, retAdd.Item1);
             }
@@ -82,7 +82,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             var model = SwApp.IGetOpenDocumentByName2(FileName);
 
-            var retAdd = swModelAsIDocument(model);
+            var retAdd = GetDocumentFromUnsafeObject(model);
             if (DocumentGotOpened != null)
                 DocumentGotOpened(this, retAdd.Item1);
 
@@ -93,7 +93,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region Public Methods
 
-        public IDocument AddUnloadedIDocument(string fileName)
+        public IDocument AddUnloadedDocument(string fileName)
         {
             var _document = Document.New(null, fileName);
             if (_document.DocumentType == swDocumentTypes_e.swDocASSEMBLY)
@@ -144,7 +144,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     if (iteratingModel.GetType() == (int)swDocumentTypes_e.swDocPART ||
                         iteratingModel.GetType() == (int)swDocumentTypes_e.swDocASSEMBLY)
                     {
-                        var ret = swModelAsIDocument(iteratingModel);
+                        var ret = GetDocumentFromUnsafeObject(iteratingModel);
 
                         if (DocumentGotOpened != null)
                             DocumentGotOpened(this, ret.Item1);
@@ -159,12 +159,17 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             return retValue;
         }
 
-        
 
-         
 
-        public Tuple<IDocument, DocumentAddOperationRet_e> swModelAsIDocument(ModelDoc2 model)
+
+
+        public Tuple<IDocument, DocumentAddOperationRet_e> GetDocumentFromUnsafeObject(object unsafeObject)
         {
+            var model = unsafeObject as ModelDoc2;
+
+            if (model == null)
+                throw new ArgumentException($"Failed to get convert {nameof(unsafeObject)} to {nameof(ModelDoc2)}");
+
             var retValue = DocumentAddOperationRet_e.Nothing;
             var retDocument = default(IDocument);
             var addNewDocument = true;

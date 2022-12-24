@@ -73,6 +73,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlueByte.SOLIDWORKS.SDK.Core\BlueByte.SOLIDWORKS.SDK.Core.csproj">
+      <Project>{4A7BE2DD-5EB4-4E9D-9742-7777009CE6CD}</Project>
+      <Name>BlueByte.SOLIDWORKS.SDK.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SWSDK\BlueByte.SOLIDWORKS.SDK.csproj">
       <Project>{82771fab-c3c4-4106-8de0-ebbfeec7b204}</Project>
       <Name>BlueByte.SOLIDWORKS.SDK</Name>

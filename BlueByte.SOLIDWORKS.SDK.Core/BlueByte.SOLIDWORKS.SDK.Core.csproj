@@ -58,11 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Documents\IAssembly.cs" />
+    <Compile Include="Documents\IDocumentManager.cs" />
     <Compile Include="Enums\DocumentAddOperationRet_e.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\IDocument.cs" />
-    <Compile Include="Documents\IDocumentManager.cs" />
     <Compile Include="ISOLIDWORKSObject.cs" />
     <Compile Include="SOLIDWORKSObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
