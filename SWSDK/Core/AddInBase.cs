@@ -19,7 +19,7 @@ using System.Windows.Forms;
 namespace BlueByte.SOLIDWORKS.SDK.Core
 {
     /// <summary>
-    /// Base AddIn class.
+    /// Base Add-in class. Make sure you decorate your class with <see cref="GuidAttribute"/> and make it COM-Visible with <see cref="ComVisibleAttribute"/>
     /// </summary>
     /// <seealso cref="SolidWorks.Interop.swpublished.ISwAddin" />
     [ComVisible(true)]
@@ -82,7 +82,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         public Identity Identity { get; private set; }
 
         /// <summary>
-        /// Gets the container.
+        /// Gets the DI container. SimpleInjector.
         /// </summary>
         /// <value>
         /// The container.
@@ -374,6 +374,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
 
+                ConnectToSOLIDWORKS(this.Application);
             }
             catch (Exception e)
             {
