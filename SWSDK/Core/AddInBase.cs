@@ -63,7 +63,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// <value>
         /// The application.
         /// </value>
-        public SOLIDWORKSApplication Application { get; private set; }
+        public ISOLIDWORKSApplication Application { get; private set; }
 
         /// <summary>
         /// Gets the cookie.
@@ -300,7 +300,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                         break;
                 }
 
-                Container.RegisterInstance<SOLIDWORKSApplication>(this.Application);
+                Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
                 Container.RegisterSingleton<IDocumentManager, DocumentManager>();
 
             }

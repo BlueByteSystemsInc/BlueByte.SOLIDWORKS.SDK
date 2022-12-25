@@ -63,8 +63,8 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\IDocument.cs" />
+    <Compile Include="ISOLIDWORKSApplication.cs" />
     <Compile Include="ISOLIDWORKSObject.cs" />
-    <Compile Include="SOLIDWORKSApplication.cs" />
     <Compile Include="SOLIDWORKSObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

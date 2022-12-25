@@ -37,9 +37,10 @@ namespace BlueByte.TestAddIn
         {
             AttachDebugger();
 
-            var app = Container.GetInstance<SOLIDWORKSApplication>();
+            var app = Container.GetInstance<ISOLIDWORKSApplication>();
             
             documentManager = Container.GetInstance<IDocumentManager>();
+
             documentManager.LoadExistingDocuments();
 
             app.As<SldWorks>().SendMsgToUser($"Hello World! There are {documentManager.Documents.Count} open.");

@@ -29,7 +29,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region Public Constructors
 
-        public DocumentManager(SOLIDWORKSApplication app)
+        public DocumentManager(ISOLIDWORKSApplication app)
         {
             SwApp = app.UnSafeObject;
         }
