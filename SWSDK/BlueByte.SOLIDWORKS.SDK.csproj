@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SimpleInjector, Version=5.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.5.3.2\lib\net45\SimpleInjector.dll</HintPath>
+      <HintPath>..\packages\SimpleInjector.5.4.1\lib\net45\SimpleInjector.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldworks, Version=29.1.0.61, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
       <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2021.3.0\lib\SolidWorks.Interop.sldworks.dll</HintPath>

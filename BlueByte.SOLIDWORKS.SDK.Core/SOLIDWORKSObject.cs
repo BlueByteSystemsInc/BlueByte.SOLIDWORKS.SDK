@@ -6,7 +6,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 {
     public abstract class SOLIDWORKSObject : ISOLIDWORKSObject
     {
-        public Object UnSafeObject { get; internal set; }
+        public dynamic UnSafeObject { get;  set; }
 
         public T As<T>()
         {

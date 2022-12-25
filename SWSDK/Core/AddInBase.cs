@@ -63,7 +63,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// <value>
         /// The application.
         /// </value>
-        public SldWorks Application { get; private set; }
+        public SOLIDWORKSApplication Application { get; private set; }
 
         /// <summary>
         /// Gets the cookie.
@@ -237,9 +237,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                     if (menu.IsMenuItem)
-                        menuIdsList.Add(new Tuple<int, int,string,string>(Application.AddMenu((int)menu.DocumentType, menu.Text, menu.Position), (int)menu.DocumentType, menu.Text, string.Empty));
+                        menuIdsList.Add(new Tuple<int, int,string,string>(this.Application.As<SldWorks>().AddMenu((int)menu.DocumentType, menu.Text, menu.Position), (int)menu.DocumentType, menu.Text, string.Empty));
                     else
-                        menuIdsList.Add(new Tuple<int, int, string, string>(Application.AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath),(int)menu.DocumentType, menu.Text, string.Empty));
+                        menuIdsList.Add(new Tuple<int, int, string, string>(this.Application.As<SldWorks>().AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath),(int)menu.DocumentType, menu.Text, string.Empty));
                     
                 }
             }
@@ -259,7 +259,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 foreach (var menu in menuItems)
-                    menuIdsList.Add(new Tuple<int, int, int, string, string, string>(Application.AddMenuPopupItem3((int)menu.DocumentType, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Hint, menu.CustomNames),(int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
+                    menuIdsList.Add(new Tuple<int, int, int, string, string, string>(this.Application.As<SldWorks>().AddMenuPopupItem3((int)menu.DocumentType, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Hint, menu.CustomNames),(int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
 
                 
             }
@@ -278,6 +278,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             {
                 Container = new Container();
 
+                Container.Options.EnableAutoVerification = false;
+               
                 var assembly = Assembly.GetCallingAssembly();
 
                 switch (LoggerType)
@@ -298,7 +300,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                         break;
                 }
 
-                Container.RegisterInstance<SldWorks>(this.Application);
+                Container.RegisterInstance<SOLIDWORKSApplication>(this.Application);
                 Container.RegisterSingleton<IDocumentManager, DocumentManager>();
 
             }
@@ -351,14 +353,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         #endregion
 
 
+
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
             try
             {
-                this.Application = ThisSW as SldWorks;
+                this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
+
                 
-             
-       
+
+
 
                 Init();
 
@@ -366,7 +370,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 // enable menu callbacks
-                this.Application.SetAddinCallbackInfo2(0, this, Cookie);
+                 this.Application.As<SldWorks>().SetAddinCallbackInfo2(0, this, Cookie);
 
 
                 BuildMenu();
@@ -374,12 +378,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
 
-                ConnectToSOLIDWORKS(this.Application);
+                ConnectToSOLIDWORKS(this.Application.As<SldWorks>());
             }
             catch (Exception e)
             {
 
-                this.Application.SendMsgToUser($"{e.Message} {e.StackTrace}");
+                this.Application.As<SldWorks>().SendMsgToUser($"{e.Message} {e.StackTrace}");
             }
 
 
@@ -394,6 +398,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 DestroyMenus();
 
                 handler.CleanFiles();
+
+
+                OnDisconnectFromSOLIDWORKS();
             }
             catch (Exception)
             {
@@ -404,6 +411,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             return true;
         }
 
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        protected virtual void OnDisconnectFromSOLIDWORKS()
+        {
+
+        }
+
         private void DestroyMenus()
         {
             if (menuIds != null)
@@ -412,7 +427,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 t.Reverse();
                 
                 foreach (var ts in t)
-                    Application.RemoveMenu(ts.Item2, ts.Item3, ts.Item4);
+                    this.Application.As<SldWorks>().RemoveMenu(ts.Item2, ts.Item3, ts.Item4);
                 
             }
 
@@ -424,10 +439,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 
 
                 foreach (var ts in t)
-                    Application.RemoveMenuPopupItem(ts.Item2, ts.Item3,ts.Item4, ts.Item5, ts.Item6,0);
+                    this.Application.As<SldWorks>().RemoveMenuPopupItem(ts.Item2, ts.Item3,ts.Item4, ts.Item5, ts.Item6,0);
 
             }
         }
     }
+
+
+   
 }
+
+
 

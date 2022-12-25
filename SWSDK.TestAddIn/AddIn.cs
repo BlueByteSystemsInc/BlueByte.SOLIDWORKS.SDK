@@ -17,21 +17,37 @@ namespace BlueByte.TestAddIn
     [MenuItem("SDK", swDocumentTypes_e.swDocNONE, true)]
     [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocNONE, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
     public class AddIn : AddInBase
-    { 
+    {
+        #region fields 
+        IDocumentManager documentManager;
+
+        #endregion 
+
+
+        protected override void OnDisconnectFromSOLIDWORKS()
+        {
+            base.OnDisconnectFromSOLIDWORKS();
+            documentManager.DeattachEventHandlers();
+        }
+
+
+        #region menu event handlers 
 
         public void OnMenuClick()
         {
-            var app = Container.GetInstance<SldWorks>();
-            app.SendMsgToUser("Hello World!");
+            AttachDebugger();
 
+            var app = Container.GetInstance<SOLIDWORKSApplication>();
+            
+            documentManager = Container.GetInstance<IDocumentManager>();
+            documentManager.LoadExistingDocuments();
 
-            var documentManager = Container.GetInstance<IDocumentManager>();
-
+            app.As<SldWorks>().SendMsgToUser($"Hello World! There are {documentManager.Documents.Count} open.");
 
 
         }
 
+        #endregion 
 
-        
     }
 }

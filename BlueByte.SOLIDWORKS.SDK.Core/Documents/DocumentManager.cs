@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
-    internal class DocumentManager : IDocumentManager, IDisposable
+    public class DocumentManager : IDocumentManager, IDisposable
     {
         #region Public Events
 
@@ -29,9 +29,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region Public Constructors
 
-        public DocumentManager(SldWorks SOLIDWORKS)
+        public DocumentManager(SOLIDWORKSApplication app)
         {
-            SwApp = SOLIDWORKS;
+            SwApp = app.UnSafeObject;
         }
 
         #endregion
