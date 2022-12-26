@@ -10,9 +10,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region fields 
 
-        PartDoc partDoc;
-        AssemblyDoc assemblyDoc;
-        DrawingDoc drawingDoc;
+        PartDoc partDoc =  default(PartDoc);
+        AssemblyDoc assemblyDoc =  default(AssemblyDoc);
+        DrawingDoc drawingDoc = default(DrawingDoc);
 
 
         #endregion
@@ -149,7 +149,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     break;
                 case swDocumentTypes_e.swDocDRAWING:
                     {
-                        if (assemblyDoc != null)
+                        if (drawingDoc != null)
                         {
                             drawingDoc.DestroyNotify2 += DrawingDoc_DestroyNotify2; ;
                             drawingDoc.AddCustomPropertyNotify += DrawingDoc_AddCustomPropertyNotify;
