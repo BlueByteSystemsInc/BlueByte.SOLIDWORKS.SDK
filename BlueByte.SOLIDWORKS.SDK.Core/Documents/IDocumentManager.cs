@@ -26,9 +26,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         IDocument[] GetDocuments();
 
         /// <summary>
-        /// Occurs when [document got closed].
+        /// Occurs when [document got closed]. 
         /// </summary>
         event EventHandler<Tuple<IDocument, swDestroyNotifyType_e>> DocumentGotClosed;
+
+
+        /// <summary>
+        /// Occurs when <see cref="ActiveDocument"/> changes. The argument e might be null if there is no active document.
+        /// </summary>
+        event EventHandler<IDocument> ActiveDocumentChanged;
+
 
         /// <summary>
         /// Occurs when [document got created].

@@ -33,9 +33,9 @@ namespace BlueByte.TestAddIn
 
             AttachDebugger();
 
-            var app = Container.GetInstance<ISOLIDWORKSApplication>();
            
-            
+           
+           
             this.DocumentManager.DocumentGotOpened += DocumentManager_DocumentGotOpened;
             this.DocumentManager.DocumentGotCreated += DocumentManager_DocumentGotCreated;
             this.DocumentManager.DocumentGotClosed += DocumentManager_DocumentGotClosed;

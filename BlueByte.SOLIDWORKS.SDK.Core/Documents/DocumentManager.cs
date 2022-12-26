@@ -32,6 +32,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public event EventHandler<IDocument> DocumentGotOpened;
 
+
+
+        public event EventHandler<IDocument> ActiveDocumentChanged;
+
         #endregion
 
         #region Public Properties
@@ -163,13 +167,17 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             if (modelDoc == null)
             {
                 ActiveDocument = null;
+                if (ActiveDocumentChanged != null)
+                    ActiveDocumentChanged.Invoke(this, null);
                 return 0;
             }
             
             var doc = this.Documents.ToArray().FirstOrDefault(x => x.Equals(modelDoc.GetTitle()));
-
-
             this.ActiveDocument = doc;
+
+            if (ActiveDocumentChanged != null)
+                ActiveDocumentChanged.Invoke(this, doc);
+
 
             return 0;
         }
