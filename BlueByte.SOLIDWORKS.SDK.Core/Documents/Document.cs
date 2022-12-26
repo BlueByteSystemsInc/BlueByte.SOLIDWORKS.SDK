@@ -99,6 +99,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     case swDocumentTypes_e.swDocASSEMBLY:
                         assemblyDoc = model as AssemblyDoc;
                         break;
+
+                    case swDocumentTypes_e.swDocDRAWING:
+                        drawingDoc = model as DrawingDoc;
+                        break;
                 }
 
                 IsVisible = model.Visible;
