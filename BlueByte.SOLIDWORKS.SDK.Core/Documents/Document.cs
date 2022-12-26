@@ -26,6 +26,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyChanged;
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyAdded;
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
+        public event EventHandler GotLoaded;
 
         #endregion
 
@@ -55,10 +56,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public string PathName { get; private set; }
 
         public swDocumentTypes_e DocumentType { get; private set; }
-        
-        public bool IsLoaded { get; private set; }
 
-        
+        private bool isLoaded;
+        public bool IsLoaded
+        {
+            get { return isLoaded; }
+            set { isLoaded = value; NotifyPropertyChanged(nameof(IsLoaded)); }
+        }
+
+        public CustomProperties.ICustomPropertyManager CustomPropertyManager { get; set; }
 
 
         public static Document New(ModelDoc2 model, string fullFileName = "", bool isRoot = false)
@@ -67,13 +73,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             
             instance = new Document(model, fullFileName, isRoot);
 
+            
+
             return instance;
         }
 
         internal Document(ModelDoc2 model, string fullFileName = "", bool isRoot = false)
         {
-          
 
+             
             
             if (model == null)
             {
@@ -243,7 +251,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             CustomPropertyChanged?.Invoke(this, eventArgs);
 
             if (eventArgs.Handled)
-                return -1;
+            {
+                this.DettachEventHandlers();
+                CustomPropertyManager.Set(this, propName, NewValue == null ? String.Empty : NewValue.ToLower(), Configuration);
+                this.AttachEventHandlers();
+
+            }
 
             return 0;
         }
@@ -254,7 +267,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             CustomPropertyDeleted?.Invoke(this, eventArgs);
 
             if (eventArgs.Handled)
-                return -1;
+            {
+                this.DettachEventHandlers();
+                CustomPropertyManager.AddSafe(this, propName, Value == null ? String.Empty : Value.ToLower(), (swCustomInfoType_e)valueType, Configuration);
+                this.AttachEventHandlers();
+            }
             return 0;
         }
 
@@ -263,7 +280,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Add, this as IDocument, propName, Configuration, Value, string.Empty);
             CustomPropertyAdded?.Invoke(this, eventArgs);
             if (eventArgs.Handled)
-                return -1;
+            {
+                this.DettachEventHandlers();
+                CustomPropertyManager.Delete(this, propName, Configuration);
+                this.AttachEventHandlers();
+            }
 
             return 0;
         }
@@ -306,10 +327,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public virtual void DettachEventHandlers()
         {
-            GotClosed = null;
-            CustomPropertyAdded = null;
-            CustomPropertyDeleted = null;
-            CustomPropertyChanged = null;
 
             switch (DocumentType)
             {
@@ -356,7 +373,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public virtual void Dispose()
         {
+            // flush all events
+
+            GotClosed = null;
+            CustomPropertyAdded = null;
+            CustomPropertyDeleted = null;
+            CustomPropertyChanged = null;
+
             this.PropertyChanged -= Document_PropertyChanged;
+
+
+            base.Flush();
+
 
             DettachEventHandlers();
 
@@ -389,7 +417,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         private void Document_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

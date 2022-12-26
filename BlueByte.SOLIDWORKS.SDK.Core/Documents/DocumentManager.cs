@@ -131,6 +131,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public IDocument AddUnloadedDocument(string fileName)
         {
+
+            
+
             var _document = Document.New(null, fileName);
             if (_document.DocumentType == swDocumentTypes_e.swDocASSEMBLY)
                 _document = new Document(null, fileName);
@@ -295,7 +298,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 if (model.GetType() == (int)swDocumentTypes_e.swDocASSEMBLY)
                 {
-                    IAssembly assembly = new Document(model, model.GetPathName());
+                    IAssembly assembly = new Assembly(model, model.GetPathName(), true);
                     assembly.DettachEventHandlers();
                     assembly.AttachEventHandlers();
                     assembly.GotClosed += document_GotClosed;

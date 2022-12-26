@@ -72,7 +72,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// <value>
         /// The custom property manager.
         /// </value>
-        public ICustomPropertyManager CustomPropertyManager { get; private set; }
+        public BlueByte.SOLIDWORKS.SDK.Core.CustomProperties.ICustomPropertyManager CustomPropertyManager { get; private set; }
 
         /// <summary>
         /// Gets the application.
@@ -330,7 +330,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         {
             Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
             Container.RegisterSingleton<IDocumentManager, DocumentManager>();
-            Container.RegisterSingleton<ICustomPropertyManager, CustomPropertyManager>();
+            Container.RegisterSingleton<CustomProperties.ICustomPropertyManager, CustomProperties.CustomPropertyManager>();
         }
 
 
@@ -408,6 +408,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 DocumentManager = Container.GetInstance<IDocumentManager>();
                 DocumentManager.AttachEventHandlers();
                 DocumentManager.InitializeWithPreloadedDocuments();
+
+                CustomPropertyManager = Container.GetInstance<CustomProperties.ICustomPropertyManager>();
+                CustomPropertyManager.Initialize();
 
                 OnConnectToSOLIDWORKS(this.Application.As<SldWorks>());
             }

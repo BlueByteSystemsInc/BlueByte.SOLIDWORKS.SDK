@@ -1,5 +1,6 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+using SolidWorks.Interop.swconst;
 using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
@@ -24,6 +25,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
 
 
+        
+
 
 
         /// <summary>
@@ -32,7 +35,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         /// <param name="doc">The document.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="value">The value.</param>
-        void Set(IDocument doc, string propertyName, object value);
+        /// <param name="configurationName"></param>
+        void Set(IDocument doc, string propertyName, object value, string configurationName = "");
 
 
         /// <summary>
@@ -42,5 +46,22 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="configurationName">Name of the configuration.</param>
         void Delete(IDocument doc, string propertyName, string configurationName = "");
+
+
+        /// <summary>
+        /// Adds the specified property in the specified document safely.
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="dataType">Type of the data.</param>
+        /// <param name="configurationName">Name of the configuration.</param>
+        void AddSafe(IDocument doc, string propertyName, object value, swCustomInfoType_e dataType = swCustomInfoType_e.swCustomInfoText, string configurationName = "");
+        
+
+            /// <summary>
+            /// Initializes this instance.
+            /// </summary>
+            void Initialize();
     }  
 }

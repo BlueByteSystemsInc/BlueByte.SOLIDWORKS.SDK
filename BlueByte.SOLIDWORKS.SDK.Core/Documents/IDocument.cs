@@ -1,4 +1,5 @@
-﻿using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.CustomProperties;
+using BlueByte.SOLIDWORKS.SDK.CustomProperties;
 using SolidWorks.Interop.swconst;
 using System;
 
@@ -25,8 +26,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </summary>
         event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
 
-        #endregion 
+        #endregion
 
+
+        /// <summary>
+        /// Gets the custom property manager.
+        /// </summary>
+        /// <value>
+        /// The custom property manager.
+        /// </value>
+        ICustomPropertyManager CustomPropertyManager { get;   set; }
 
         /// <summary>
         /// Gets a value indicating whether this document is visible.
