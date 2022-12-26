@@ -11,13 +11,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     /// </summary>
     public interface IDocumentManager
     {
+
         /// <summary>
-        /// Gets or sets the documents. Do not set, add, replace and remove items from this list.
+        /// Gets an array the open loaded and visible documents.
         /// </summary>
-        /// <value>
-        /// The documents.
-        /// </value>
-        ObservableCollection<IDocument> Documents { get; set; }
+        /// <returns></returns>
+        IDocument[] GetDocuments();
 
         /// <summary>
         /// Occurs when [document got closed].
@@ -49,7 +48,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <summary>
         /// Dettaches the event handlers.
         /// </summary>
-        void DeattachEventHandlers();
+        void DettachEventHandlers();
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -67,6 +66,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Loads the existing documents. Calls this after creating an instance of this class to load existing documents.
         /// </summary>
         /// <returns></returns>
-        Dictionary<IDocument, DocumentAddOperationRet_e> LoadExistingDocuments();
+        void InitializeWithPreloadedDocuments();
+
+
+
+
     }
 }

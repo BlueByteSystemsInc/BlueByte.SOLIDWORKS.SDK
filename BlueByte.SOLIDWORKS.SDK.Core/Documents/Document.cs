@@ -210,7 +210,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         private int assemblyDoc_DestroyNotify2(int DestroyType)
         {
-            throw new NotImplementedException();
+            if (GotClosed != null)
+                GotClosed(this, (swDestroyNotifyType_e)DestroyType);
+
+            return 0;
         }
 
         private int PartDoc_ChangeCustomPropertyNotify(string propName, string Configuration, string oldValue, string NewValue, int valueType)
@@ -230,7 +233,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         private int PartDoc_DestroyNotify2(int DestroyType)
         {
-            throw new NotImplementedException();
+            if (GotClosed != null)
+                GotClosed(this, (swDestroyNotifyType_e)DestroyType);
+
+            return 0;
         }
 
         public virtual void DettachEventHandlers()
@@ -290,6 +296,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             UnSafeObject = null;
 
             IsLoaded = false;
+
+
 
 
         }

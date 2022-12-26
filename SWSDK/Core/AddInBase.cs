@@ -53,9 +53,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
         BitmapHandler handler = new BitmapHandler();
 
-        #endregion 
+        #endregion
 
         #region properties 
+
+
+        /// <summary>
+        /// Gets the document manager.
+        /// </summary>
+        /// <value>
+        /// The document manager.
+        /// </value>
+        public IDocumentManager DocumentManager { get; private set; }
 
         /// <summary>
         /// Gets the application.
@@ -207,7 +216,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// Connects to solidworks.
         /// </summary>
         /// <param name="swApp">The sw application.</param>
-        protected virtual void ConnectToSOLIDWORKS(SldWorks swApp)
+        protected virtual void OnConnectToSOLIDWORKS(SldWorks swApp)
         {
 
         }
@@ -300,16 +309,25 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                         break;
                 }
 
-                Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
-                Container.RegisterSingleton<IDocumentManager, DocumentManager>();
+                RegisterDefaultTypes();
 
             }
         }
 
 
-        #region com registration
+        /// <summary>
+        /// Registers the default types. Register as singletons both <see cref="SldWorks"/> and <see cref="IDocumentManager"/>
+        /// </summary>
+        protected virtual void RegisterDefaultTypes()
+        {
+            Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
+            Container.RegisterSingleton<IDocumentManager, DocumentManager>();
+        }
 
-        [ComRegisterFunction]
+
+            #region com registration
+
+            [ComRegisterFunction]
         private static void RegisterAssembly(Type t)
         {
             try
@@ -377,8 +395,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 BuildPopMenu();
 
 
+                // init document manager 
+                DocumentManager = Container.GetInstance<IDocumentManager>();
+                DocumentManager.AttachEventHandlers();
+                DocumentManager.InitializeWithPreloadedDocuments();
 
-                ConnectToSOLIDWORKS(this.Application.As<SldWorks>());
+                OnConnectToSOLIDWORKS(this.Application.As<SldWorks>());
             }
             catch (Exception e)
             {
@@ -401,6 +423,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 OnDisconnectFromSOLIDWORKS();
+
+
+                if (DocumentManager != null)
+                    DocumentManager.Dispose();
+
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(this.Application.UnSafeObject);
+
+                System.GC.Collect();
+                System.GC.Collect();
+
+                System.GC.WaitForPendingFinalizers();
+
             }
             catch (Exception)
             {

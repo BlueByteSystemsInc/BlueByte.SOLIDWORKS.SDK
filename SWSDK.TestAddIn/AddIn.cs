@@ -4,6 +4,7 @@ using BlueByte.SOLIDWORKS.SDK.Core;
 using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -16,18 +17,36 @@ namespace BlueByte.TestAddIn
     [StartUp(true)]
     [MenuItem("SDK", swDocumentTypes_e.swDocNONE, true)]
     [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocNONE, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
+    [MenuItem("SDK", swDocumentTypes_e.swDocPART, true)]
+    [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocPART, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
     public class AddIn : AddInBase
     {
         #region fields 
-        IDocumentManager documentManager;
+        
 
         #endregion 
 
 
+        protected override void OnConnectToSOLIDWORKS(SldWorks swApp)
+        {
+            base.OnConnectToSOLIDWORKS(swApp);
+
+            AttachDebugger();
+
+            var app = Container.GetInstance<ISOLIDWORKSApplication>();
+           
+            
+            this.DocumentManager.DocumentGotOpened += DocumentManager_DocumentGotOpened;
+            this.DocumentManager.DocumentGotCreated += DocumentManager_DocumentGotCreated;
+            this.DocumentManager.DocumentGotClosed += DocumentManager_DocumentGotClosed;
+            
+            
+        }
+
         protected override void OnDisconnectFromSOLIDWORKS()
         {
             base.OnDisconnectFromSOLIDWORKS();
-            documentManager.DeattachEventHandlers();
+
         }
 
 
@@ -35,20 +54,32 @@ namespace BlueByte.TestAddIn
 
         public void OnMenuClick()
         {
-            AttachDebugger();
 
-            var app = Container.GetInstance<ISOLIDWORKSApplication>();
-            
-            documentManager = Container.GetInstance<IDocumentManager>();
 
-            documentManager.LoadExistingDocuments();
-
-            app.As<SldWorks>().SendMsgToUser($"Hello World! There are {documentManager.Documents.Count} open.");
+            Debug.Print($"There are {this.DocumentManager.GetDocuments().Length} open documents.");
 
 
         }
 
-        #endregion 
+        private void DocumentManager_DocumentGotClosed(object sender, System.Tuple<IDocument, swDestroyNotifyType_e> e)
+        {
+
+            Debug.Print($"This document {e.Item1.FileName} was closed [{e.Item2.ToString()}].");
+        }
+
+        private void DocumentManager_DocumentGotCreated(object sender, IDocument e)
+        {
+            Debug.Print($"A new document has been created {e.FileName}.");
+
+        }
+
+        private void DocumentManager_DocumentGotOpened(object sender, IDocument e)
+        {
+            Debug.Print($"A document has been opened {e.FileName}.");
+
+        }
+
+        #endregion
 
     }
 }
