@@ -57,6 +57,15 @@ namespace BlueByte.SOLIDWORKS.SDK.CustomProperties
         /// The old value.
         /// </value>
         public string OldValue { get; private set; }
+
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="CustomPropertyChangedEventArgs"/> is handled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if handled; otherwise, <c>false</c>.
+        /// </value>
+        public bool Handled { get; set; }
         #endregion 
 
 

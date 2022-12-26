@@ -241,6 +241,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Change, this as IDocument, propName, Configuration, oldValue, NewValue);
             CustomPropertyChanged?.Invoke(this, eventArgs);
+
+            if (eventArgs.Handled)
+                return -1;
+
             return 0;
         }
 
@@ -248,6 +252,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Delete, this as IDocument, propName, Configuration);
             CustomPropertyDeleted?.Invoke(this, eventArgs);
+
+            if (eventArgs.Handled)
+                return -1;
             return 0;
         }
 
@@ -255,6 +262,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Add, this as IDocument, propName, Configuration, Value, string.Empty);
             CustomPropertyAdded?.Invoke(this, eventArgs);
+            if (eventArgs.Handled)
+                return -1;
+
             return 0;
         }
 
