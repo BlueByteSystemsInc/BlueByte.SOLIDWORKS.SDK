@@ -67,6 +67,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         public IDocumentManager DocumentManager { get; private set; }
 
         /// <summary>
+        /// Gets the custom property manager.
+        /// </summary>
+        /// <value>
+        /// The custom property manager.
+        /// </value>
+        public ICustomPropertyManager CustomPropertyManager { get; private set; }
+
+        /// <summary>
         /// Gets the application.
         /// </summary>
         /// <value>
@@ -322,6 +330,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         {
             Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
             Container.RegisterSingleton<IDocumentManager, DocumentManager>();
+            Container.RegisterSingleton<ICustomPropertyManager, CustomPropertyManager>();
         }
 
 
@@ -424,6 +433,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
                 OnDisconnectFromSOLIDWORKS();
 
+                if (CustomPropertyManager != null)
+                    CustomPropertyManager.Dispose();
 
                 if (DocumentManager != null)
                     DocumentManager.Dispose();

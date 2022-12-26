@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.swconst;
+﻿using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+using SolidWorks.Interop.swconst;
 using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
@@ -10,6 +11,23 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     /// <seealso cref="System.IDisposable" />
     public interface IDocument : ISOLIDWORKSObject, IDisposable
     {
+        #region events 
+        /// <summary>
+        /// Occurs when [custom property changed].
+        /// </summary>
+        event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyChanged;
+        /// <summary>
+        /// Occurs when [custom property added].
+        /// </summary>
+        event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyAdded;
+        /// <summary>
+        /// Occurs when [custom property deleted].
+        /// </summary>
+        event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
+
+        #endregion 
+
+
         /// <summary>
         /// Gets a value indicating whether this document is visible.
         /// </summary>

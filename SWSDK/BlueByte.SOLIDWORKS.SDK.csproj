@@ -72,6 +72,7 @@
     <Compile Include="Attributes\StartUp.cs" />
     <Compile Include="Core\BitmapHandler.cs" />
     <Compile Include="Core\SOLIDWORKSApplication.cs" />
+    <Compile Include="CustomProperties\CustomPropertyManager.cs" />
     <Compile Include="Diagnostics\ConsoleLogger.cs" />
     <Compile Include="Diagnostics\FileLogger.cs" />
     <Compile Include="Core\Identity.cs" />

@@ -1,4 +1,6 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.CustomProperties;
+using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 
@@ -21,8 +23,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         #region events 
 
         public event EventHandler<swDestroyNotifyType_e> GotClosed;
+        public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyChanged;
+        public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyAdded;
+        public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
 
-        #endregion 
+        #endregion
 
         /// <summary>
         /// Gets or sets the solidworks object.
@@ -30,8 +35,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <value>
         /// The solidworks object.
         /// </value>
-        
-        
+
+
         public void Refresh()
         {
             if (this.UnSafeObject != null && this.IsLoaded)
@@ -127,10 +132,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     {
                         if (partDoc != null)
                         {
-                            partDoc.DestroyNotify2 += PartDoc_DestroyNotify2;
-                            partDoc.AddCustomPropertyNotify += PartDoc_AddCustomPropertyNotify;
-                            partDoc.DeleteCustomPropertyNotify += PartDoc_DeleteCustomPropertyNotify;
-                            partDoc.ChangeCustomPropertyNotify += PartDoc_ChangeCustomPropertyNotify;
+                            partDoc.DestroyNotify2 += document_DestroyNotify2;
+                            partDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
+                            partDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
+                            partDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
                         }
                     }
                     break;
@@ -140,9 +145,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (assemblyDoc != null)
                         {
                             assemblyDoc.DestroyNotify2 += assemblyDoc_DestroyNotify2;
-                            assemblyDoc.AddCustomPropertyNotify += assemblyDoc_AddCustomPropertyNotify;
-                            assemblyDoc.DeleteCustomPropertyNotify += assemblyDoc_DeleteCustomPropertyNotify;
-                            assemblyDoc.ChangeCustomPropertyNotify += assemblyDoc_ChangeCustomPropertyNotify;
+                            assemblyDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
+                            assemblyDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
+                            assemblyDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
                             assemblyDoc.FileReloadNotify += assemblyDoc_FileReloadNotify;
                         }
                     }
@@ -152,9 +157,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (drawingDoc != null)
                         {
                             drawingDoc.DestroyNotify2 += DrawingDoc_DestroyNotify2; ;
-                            drawingDoc.AddCustomPropertyNotify += DrawingDoc_AddCustomPropertyNotify;
-                            drawingDoc.DeleteCustomPropertyNotify += DrawingDoc_DeleteCustomPropertyNotify; ;
-                            drawingDoc.ChangeCustomPropertyNotify += DrawingDoc_ChangeCustomPropertyNotify; ;
+                            drawingDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
+                            drawingDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify; ;
+                            drawingDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify; ;
                             drawingDoc.FileReloadNotify += DrawingDoc_FileReloadNotify; ;
                         }
                     }
@@ -170,21 +175,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             throw new NotImplementedException();
         }
 
-        private int DrawingDoc_ChangeCustomPropertyNotify(string propName, string Configuration, string oldValue, string NewValue, int valueType)
-        {
-            throw new NotImplementedException();
-        }
-
-        private int DrawingDoc_DeleteCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
-        {
-            throw new NotImplementedException();
-        }
-
-        private int DrawingDoc_AddCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private int DrawingDoc_DestroyNotify2(int DestroyType)
         {
             if (GotClosed != null)
@@ -245,19 +236,25 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             throw new NotImplementedException();
         }
 
-        private int assemblyDoc_ChangeCustomPropertyNotify(string propName, string Configuration, string oldValue, string NewValue, int valueType)
+        private int document_ChangeCustomPropertyNotify(string propName, string Configuration, string oldValue, string NewValue, int valueType)
         {
-            throw new NotImplementedException();
+            var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Change, this as IDocument, propName, Configuration, oldValue, NewValue);
+            CustomPropertyChanged?.Invoke(this, eventArgs);
+            return 0;
         }
 
-        private int assemblyDoc_DeleteCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
+        private int document_DeleteCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
         {
-            throw new NotImplementedException();
+            var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Delete, this as IDocument, propName, Configuration);
+            CustomPropertyDeleted?.Invoke(this, eventArgs);
+            return 0;
         }
 
-        private int assemblyDoc_AddCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
+        private int document_AddCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
         {
-            throw new NotImplementedException();
+            var eventArgs = CustomPropertyChangedEventArgs.New(ChangeType.Add, this as IDocument, propName, Configuration, Value, string.Empty);
+            CustomPropertyAdded?.Invoke(this, eventArgs);
+            return 0;
         }
 
         private int assemblyDoc_DestroyNotify2(int DestroyType)
@@ -268,22 +265,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             return 0;
         }
 
-        private int PartDoc_ChangeCustomPropertyNotify(string propName, string Configuration, string oldValue, string NewValue, int valueType)
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        private int PartDoc_DeleteCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
-        {
-            throw new NotImplementedException();
-        }
-
-        private int PartDoc_AddCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
-        {
-            throw new NotImplementedException();
-        }
-
-        private int PartDoc_DestroyNotify2(int DestroyType)
+        private int document_DestroyNotify2(int DestroyType)
         {
             if (GotClosed != null)
                 GotClosed(this, (swDestroyNotifyType_e)DestroyType);
@@ -312,6 +296,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public virtual void DettachEventHandlers()
         {
             GotClosed = null;
+            CustomPropertyAdded = null;
+            CustomPropertyDeleted = null;
+            CustomPropertyChanged = null;
 
             switch (DocumentType)
             {
@@ -319,10 +306,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     {
                         if (partDoc != null)
                         {
-                            partDoc.AddCustomPropertyNotify -= PartDoc_AddCustomPropertyNotify;
-                            partDoc.DeleteCustomPropertyNotify -= PartDoc_DeleteCustomPropertyNotify;
-                            partDoc.ChangeCustomPropertyNotify -= PartDoc_ChangeCustomPropertyNotify;
-                            partDoc.DestroyNotify2 -= PartDoc_DestroyNotify2;
+                            partDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
+                            partDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify;
+                            partDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
+                            partDoc.DestroyNotify2 -= document_DestroyNotify2;
                         }
                     }
                     break;
@@ -331,9 +318,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     {
                         if (assemblyDoc != null)
                         {
-                            assemblyDoc.AddCustomPropertyNotify -= assemblyDoc_AddCustomPropertyNotify;
-                            assemblyDoc.DeleteCustomPropertyNotify -= assemblyDoc_DeleteCustomPropertyNotify;
-                            assemblyDoc.ChangeCustomPropertyNotify -= assemblyDoc_ChangeCustomPropertyNotify;
+                            assemblyDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
+                            assemblyDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify;
+                            assemblyDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
                             assemblyDoc.DestroyNotify2 -= assemblyDoc_DestroyNotify2;
                             assemblyDoc.FileReloadNotify -= assemblyDoc_FileReloadNotify;
                         }
@@ -344,9 +331,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (drawingDoc != null)
                         {
                             drawingDoc.DestroyNotify2 -= DrawingDoc_DestroyNotify2; ;
-                            drawingDoc.AddCustomPropertyNotify -= DrawingDoc_AddCustomPropertyNotify;
-                            drawingDoc.DeleteCustomPropertyNotify -= DrawingDoc_DeleteCustomPropertyNotify; ;
-                            drawingDoc.ChangeCustomPropertyNotify -= DrawingDoc_ChangeCustomPropertyNotify; ;
+                            drawingDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
+                            drawingDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify; ;
+                            drawingDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify; ;
                             drawingDoc.FileReloadNotify -= DrawingDoc_FileReloadNotify; ;
                         }
                     }

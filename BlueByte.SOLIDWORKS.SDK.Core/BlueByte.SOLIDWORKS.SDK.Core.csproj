@@ -57,6 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomProperties\ChangeType.cs" />
+    <Compile Include="CustomProperties\CustomPropertyChangedEventArgs.cs" />
+    <Compile Include="CustomProperties\ICustomPropertyManager.cs" />
     <Compile Include="Documents\Assembly.cs" />
     <Compile Include="Documents\IAssembly.cs" />
     <Compile Include="Documents\IDocumentManager.cs" />
