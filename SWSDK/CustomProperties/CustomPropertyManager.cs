@@ -1,5 +1,6 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+using SolidWorks.Interop.sldworks;
 using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
@@ -55,12 +56,29 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
 
         }
 
-        public void Set(IDocument doc, string propertyName, object value)
+
+        public void Set(IDocument doc, string propertyName, object value, string configurationName = "")
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            var modeldoc = doc.UnSafeObject as ModelDoc2;
+
+            if (modeldoc == null)
+                throw new Exception("Could get the api model object to set the property.");
+
+            modeldoc.Extension.CustomPropertyManager[configurationName].Set2(propertyName, value.ToString());
 
         }
-        public void SetConfigurationSpecific(IDocument doc, string propertyName, object value)
+        public void Delete(IDocument doc, string propertyName, string configurationName = "")
         {
+           
+            var modeldoc = doc.UnSafeObject as ModelDoc2;
+
+            if (modeldoc == null)
+                throw new Exception("Could get the api model object to set the property.");
+
+            modeldoc.Extension.CustomPropertyManager[configurationName].Delete(propertyName);
 
         }
     }

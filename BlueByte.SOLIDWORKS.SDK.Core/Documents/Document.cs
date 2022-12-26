@@ -170,10 +170,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             }
         }
 
-        private int DrawingDoc_FileReloadNotify()
-        {
-            throw new NotImplementedException();
-        }
+ 
 
         
         private int DrawingDoc_DestroyNotify2(int DestroyType)
@@ -232,6 +229,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
 
         private int assemblyDoc_FileReloadNotify()
+        {
+            throw new NotImplementedException();
+        }
+        private int DrawingDoc_FileReloadNotify()
         {
             throw new NotImplementedException();
         }
