@@ -4,12 +4,25 @@ using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
-    public class DocumentManager : IDocumentManager, IDisposable
+    public class DocumentManager : IDocumentManager, IDisposable , INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         #region Public Events
 
 
@@ -22,6 +35,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         #endregion
 
         #region Public Properties
+
+
+        private IDocument activeDoc;
+
+        public IDocument ActiveDocument
+        {
+            get { return activeDoc; }
+            set { activeDoc = value; NotifyPropertyChanged(nameof(ActiveDocument)); }
+        }
 
         ObservableCollection<IDocument> Documents { get; set; } = new ObservableCollection<IDocument>();
 
@@ -129,12 +151,32 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public void AttachEventHandlers()
         {
+            SwApp.ActiveModelDocChangeNotify += SwApp_ActiveModelDocChangeNotify; ;
             SwApp.FileOpenNotify2 += SwApp_FileOpenNotify2;
             SwApp.FileNewNotify2 += SwApp_FileNewNotify2;
         }
 
+        private int SwApp_ActiveModelDocChangeNotify()
+        {
+            var modelDoc = SwApp.ActiveDoc as ModelDoc;
+
+            if (modelDoc == null)
+            {
+                ActiveDocument = null;
+                return 0;
+            }
+            
+            var doc = this.Documents.ToArray().FirstOrDefault(x => x.Equals(modelDoc.GetTitle()));
+
+
+            this.ActiveDocument = doc;
+
+            return 0;
+        }
+
         public void DettachEventHandlers()
         {
+            SwApp.ActiveModelDocChangeNotify -= SwApp_ActiveModelDocChangeNotify;
             SwApp.FileOpenNotify2 -= SwApp_FileOpenNotify2;
             SwApp.FileNewNotify2 -= SwApp_FileNewNotify2;
 

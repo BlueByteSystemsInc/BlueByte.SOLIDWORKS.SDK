@@ -239,6 +239,24 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             return 0;
         }
 
+        public bool Equals(IDocument doc)
+        {
+            var f = this.FileName;
+            if (System.IO.Path.HasExtension(f))
+                return doc.FileName.Equals(f);
+
+            return System.IO.Path.GetFileNameWithoutExtension(doc.FileName).Equals(System.IO.Path.GetFileNameWithoutExtension(f));
+        }
+
+        public bool Equals(string filename)
+        {
+            var f = this.FileName;
+            if (System.IO.Path.HasExtension(f))
+                return filename.Equals(f);
+
+            return System.IO.Path.GetFileNameWithoutExtension(filename).Equals(System.IO.Path.GetFileNameWithoutExtension(f));
+        }
+
         public virtual void DettachEventHandlers()
         {
             GotClosed = null;

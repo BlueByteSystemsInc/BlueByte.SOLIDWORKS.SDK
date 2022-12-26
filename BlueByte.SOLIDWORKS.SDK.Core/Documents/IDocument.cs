@@ -56,5 +56,21 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Refreshes this document.
         /// </summary>
         void Refresh();
+
+
+        /// <summary>
+        /// Equalses the specified document.
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        /// <returns></returns>
+        bool Equals(IDocument doc);
+
+
+        /// <summary>
+        /// Equalses the specified document.
+        /// </summary>
+        /// <param name="doc">file name.</param>
+        /// <returns></returns>
+        bool Equals(string filename);
     }
 }

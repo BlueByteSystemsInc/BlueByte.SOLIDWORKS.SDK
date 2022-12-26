@@ -12,6 +12,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     public interface IDocumentManager
     {
 
+
+        /// <summary>
+        /// Gets the active document. This property implements <see cref="INotifyPropertyChanged"/>
+        /// </summary>
+        IDocument ActiveDocument { get; }
+
+
         /// <summary>
         /// Gets an array the open loaded and visible documents.
         /// </summary>
