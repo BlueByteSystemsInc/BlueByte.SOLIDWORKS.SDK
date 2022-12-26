@@ -12,13 +12,17 @@ namespace BlueByte.TestAddIn
 {
     [ComVisible(true)]
     [Guid("BF1C1567-53D8-4E2B-B588-0518A1EBFA55")]
+
     [Name("Addin")]
     [Description("This is the description")]
     [StartUp(true)]
+    
     [MenuItem("SDK", swDocumentTypes_e.swDocNONE, true)]
     [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocNONE, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
     [MenuItem("SDK", swDocumentTypes_e.swDocPART, true)]
     [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocPART, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
+    [MenuItem("SDK", swDocumentTypes_e.swDocPART, true)]
+    [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocASSEMBLY, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
     public class AddIn : AddInBase
     {
         #region fields 
