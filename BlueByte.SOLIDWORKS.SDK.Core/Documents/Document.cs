@@ -73,7 +73,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             if (model == null)
             {
                 var extension = System.IO.Path.GetExtension(fullFileName);
+                
                 DocumentType = extension.ToLower().Contains("sldprt") ? swDocumentTypes_e.swDocPART : swDocumentTypes_e.swDocASSEMBLY;
+                
+                if (extension.ToLower().Contains("slddrw"))
+                    DocumentType = swDocumentTypes_e.swDocDRAWING;
+
+
                 FileName = System.IO.Path.GetFileName(fullFileName);
                 PathName = fullFileName;
                 IsLoaded = false;
@@ -137,12 +143,51 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         }
                     }
                     break;
+                case swDocumentTypes_e.swDocDRAWING:
+                    {
+                        if (assemblyDoc != null)
+                        {
+                            drawingDoc.DestroyNotify2 += DrawingDoc_DestroyNotify2; ;
+                            drawingDoc.AddCustomPropertyNotify += DrawingDoc_AddCustomPropertyNotify;
+                            drawingDoc.DeleteCustomPropertyNotify += DrawingDoc_DeleteCustomPropertyNotify; ;
+                            drawingDoc.ChangeCustomPropertyNotify += DrawingDoc_ChangeCustomPropertyNotify; ;
+                            drawingDoc.FileReloadNotify += DrawingDoc_FileReloadNotify; ;
+                        }
+                    }
+                    break;
 
                 default:
                     break;
             }
         }
 
+        private int DrawingDoc_FileReloadNotify()
+        {
+            throw new NotImplementedException();
+        }
+
+        private int DrawingDoc_ChangeCustomPropertyNotify(string propName, string Configuration, string oldValue, string NewValue, int valueType)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int DrawingDoc_DeleteCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int DrawingDoc_AddCustomPropertyNotify(string propName, string Configuration, string Value, int valueType)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int DrawingDoc_DestroyNotify2(int DestroyType)
+        {
+            if (GotClosed != null)
+                GotClosed(this, (swDestroyNotifyType_e)DestroyType);
+
+            return 0;
+        }
 
         public void Load(object UnsafeObject)
         {
@@ -162,6 +207,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
                     case swDocumentTypes_e.swDocASSEMBLY:
                         assemblyDoc = model as AssemblyDoc;
+                        break;
+                    case swDocumentTypes_e.swDocDRAWING:
+                        drawingDoc = model as DrawingDoc;
                         break;
 
                     default:
@@ -287,7 +335,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         }
                     }
                     break;
-
+                case swDocumentTypes_e.swDocDRAWING:
+                    {
+                        if (drawingDoc != null)
+                        {
+                            drawingDoc.DestroyNotify2 -= DrawingDoc_DestroyNotify2; ;
+                            drawingDoc.AddCustomPropertyNotify -= DrawingDoc_AddCustomPropertyNotify;
+                            drawingDoc.DeleteCustomPropertyNotify -= DrawingDoc_DeleteCustomPropertyNotify; ;
+                            drawingDoc.ChangeCustomPropertyNotify -= DrawingDoc_ChangeCustomPropertyNotify; ;
+                            drawingDoc.FileReloadNotify -= DrawingDoc_FileReloadNotify; ;
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -307,6 +366,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(assemblyDoc);
 
             assemblyDoc = null;
+
+            if (drawingDoc != null)
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(drawingDoc);
+
+            drawingDoc = null;
 
             if (UnSafeObject != null)
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(UnSafeObject);
