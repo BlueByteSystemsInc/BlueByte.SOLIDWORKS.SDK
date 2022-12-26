@@ -5,7 +5,7 @@ using System;
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
 
-    internal class Document : SOLIDWORKSObject, IDocument, IAssembly
+    internal class Document : SOLIDWORKSObject, IDocument
     {
 
         #region fields 
