@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="BlueByte.SOLIDWORKS.SDK.Core.SOLIDWORKSObject" />
+    /// <seealso cref="BlueByte.SOLIDWORKS.SDK.Core.ISOLIDWORKSApplication" />
     internal class SOLIDWORKSApplication : SOLIDWORKSObject, ISOLIDWORKSApplication
     {
         internal SOLIDWORKSApplication(SldWorks Sldworks) : base()

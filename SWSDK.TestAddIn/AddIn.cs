@@ -26,9 +26,9 @@ namespace BlueByte.TestAddIn
     public class AddIn : AddInBase
     {
         #region fields 
-        
 
-        #endregion 
+
+        #endregion
 
 
         protected override void OnConnectToSOLIDWORKS(SldWorks swApp)
@@ -37,9 +37,6 @@ namespace BlueByte.TestAddIn
 
             AttachDebugger();
 
-           
-           
-           
             this.DocumentManager.DocumentGotOpened += DocumentManager_DocumentGotOpened;
             this.DocumentManager.DocumentGotCreated += DocumentManager_DocumentGotCreated;
             this.DocumentManager.DocumentGotClosed += DocumentManager_DocumentGotClosed;

@@ -12,9 +12,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region fields 
 
-        PartDoc partDoc =  default(PartDoc);
-        AssemblyDoc assemblyDoc =  default(AssemblyDoc);
-        DrawingDoc drawingDoc = default(DrawingDoc);
+        internal PartDoc partDoc =  default(PartDoc);
+        internal AssemblyDoc assemblyDoc =  default(AssemblyDoc);
+        internal DrawingDoc drawingDoc = default(DrawingDoc);
 
 
         #endregion

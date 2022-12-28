@@ -8,7 +8,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
     {
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MenuItemAttribute" /> class.
+        /// Initializes a new instance of the <see cref="MenuItemAttribute" /> class. Add images to the project level and set their build action to embed resource. Size is 20x20, 32x32, 40x40, 64x64, 96x96 or 128x128.
         /// </summary>
         /// <param name="menuText">The menu text.</param>
         /// <param name="docTypes">The document types.</param>
