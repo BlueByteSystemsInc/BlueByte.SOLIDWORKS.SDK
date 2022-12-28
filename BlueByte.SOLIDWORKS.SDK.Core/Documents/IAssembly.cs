@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.Documents.Components;
+using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
@@ -10,6 +11,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     /// <seealso cref="BlueByte.SOLIDWORKS.SDK.Core.Documents.IDocument" />
     public interface IAssembly : IDocument
     {
+        /// <summary>
+        /// Gets or sets the root component.
+        /// </summary>
+        /// <value>
+        /// The root component.
+        /// </value>
         IComponent RootComponent { get; set; }
+
+        /// <summary>
+        /// Initializes the assembly hierarchy.
+        /// </summary>
+        /// <param name="referencedConfiguration">The referenced configuration.</param>
+        void Initialize(string referencedConfiguration);
     }
 }

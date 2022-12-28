@@ -30,6 +30,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
 
         /// <summary>
+        /// Gets or sets the type of the document.
+        /// </summary>
+        /// <value>
+        /// The type of the document.
+        /// </value>
+        swDocumentTypes_e DocumentType { get;   }
+
+        /// <summary>
         /// Gets the custom property manager.
         /// </summary>
         /// <value>
