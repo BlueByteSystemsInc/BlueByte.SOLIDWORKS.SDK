@@ -3,6 +3,7 @@ using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
@@ -100,11 +101,63 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 assemblyDoc.AddItemNotify += AssemblyDoc_AddItemNotify;
                 assemblyDoc.DeleteItemNotify += AssemblyDoc_DeleteItemNotify;
+                assemblyDoc.ComponentStateChangeNotify3 += AssemblyDoc_ComponentStateChangeNotify3;
             }
 
 
         }
 
+        private int AssemblyDoc_ComponentStateChangeNotify3(object Component, string CompName, short oldCompState, short newCompState)
+        {
+            var newState = (swComponentSuppressionState_e)newCompState;
+            var component = Component as Component2;
+            var documentManager = Components.Component.DocumentManager;
+            var documents = documentManager.GetDocuments();
+            var document = default(IDocument);
+
+            switch (newState)
+            {
+                case swComponentSuppressionState_e.swComponentFullyResolved:
+                       document = documents.FirstOrDefault(x => x.Equals(System.IO.Path.GetFileName(component.GetPathName())));
+                    if (document == null)
+                        documentManager.GetDocumentFromUnsafeObject(component.GetModelDoc2());
+                    else
+                    {
+                        document.Load(component.GetModelDoc2());
+                        document.Refresh();
+
+                        if (document.DocumentType == swDocumentTypes_e.swDocASSEMBLY)
+                        {
+                            var assembly = document as IAssembly;
+                            assembly.Initialize(component.ReferencedConfiguration);
+                        }
+                    }
+                    break;
+                case swComponentSuppressionState_e.swComponentResolved:
+                    {
+                        document = documents.FirstOrDefault(x => x.Equals(System.IO.Path.GetFileName(component.GetPathName())));
+                        if (document == null)
+                            documentManager.GetDocumentFromUnsafeObject(component.GetModelDoc2());
+                    
+                        else
+                        {
+                            document.Load(component.GetModelDoc2());
+                            document.Refresh();
+                        }
+                    }
+                    break;
+                case swComponentSuppressionState_e.swComponentSuppressed:
+                case swComponentSuppressionState_e.swComponentLightweight:
+                case swComponentSuppressionState_e.swComponentFullyLightweight:
+                case swComponentSuppressionState_e.swComponentInternalIdMismatch:
+                default:
+                    break;
+            }
+
+
+
+            return 0;
+        }
 
         public override void DettachEventHandlers()
         {
@@ -115,7 +168,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 assemblyDoc.AddItemNotify -= AssemblyDoc_AddItemNotify;
                 assemblyDoc.DeleteItemNotify -= AssemblyDoc_DeleteItemNotify;
-
+                assemblyDoc.ComponentStateChangeNotify3 -= AssemblyDoc_ComponentStateChangeNotify3;
             }
 
             base.AttachEventHandlers();
