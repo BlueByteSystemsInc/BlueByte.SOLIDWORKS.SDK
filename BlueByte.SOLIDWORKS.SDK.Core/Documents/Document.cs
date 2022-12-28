@@ -222,12 +222,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 DettachEventHandlers();
                 AttachEventHandlers();
 
-                #region rettach property service 
 
-                // todo: 
 
-                #endregion 
-
+                GotLoaded?.Invoke(this, EventArgs.Empty);
 
 
             }
