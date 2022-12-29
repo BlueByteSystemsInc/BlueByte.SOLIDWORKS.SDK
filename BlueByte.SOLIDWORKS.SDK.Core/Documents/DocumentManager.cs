@@ -60,11 +60,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public DocumentManager(ISOLIDWORKSApplication app)
         {
             SwApp = app.UnSafeObject;
-
-
-            // used by components to get document 
+      
             // there may be a better place to put this - i dont know where since we have decided not to use the service locator
-            Components.Component.DocumentManager = this;
+            Globals.DocumentManager = this;
         }
 
         #endregion

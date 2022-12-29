@@ -29,12 +29,12 @@ namespace BlueByte.TestAddIn
 
 
         #endregion
-
+         
 
         protected override void OnConnectToSOLIDWORKS(SldWorks swApp)
         {
             base.OnConnectToSOLIDWORKS(swApp);
-
+            
             AttachDebugger();
 
             this.DocumentManager.DocumentGotOpened += DocumentManager_DocumentGotOpened;

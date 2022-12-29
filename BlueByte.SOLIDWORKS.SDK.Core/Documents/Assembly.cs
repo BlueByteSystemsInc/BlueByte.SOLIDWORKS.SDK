@@ -79,6 +79,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 if (assembly  != null)
                 {
                     var cs = assembly.RootComponent.Children;
+                    if (cs != null)
                     foreach (var c in cs)
                     {
                         c.Initialize();
@@ -102,6 +103,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 assemblyDoc.AddItemNotify += AssemblyDoc_AddItemNotify;
                 assemblyDoc.DeleteItemNotify += AssemblyDoc_DeleteItemNotify;
                 assemblyDoc.ComponentStateChangeNotify3 += AssemblyDoc_ComponentStateChangeNotify3;
+    
             }
 
 
@@ -111,7 +113,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             var newState = (swComponentSuppressionState_e)newCompState;
             var component = Component as Component2;
-            var documentManager = Components.Component.DocumentManager;
+            var documentManager = Globals.DocumentManager;
             var documents = documentManager.GetDocuments();
             var document = default(IDocument);
 
@@ -169,11 +171,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 assemblyDoc.AddItemNotify -= AssemblyDoc_AddItemNotify;
                 assemblyDoc.DeleteItemNotify -= AssemblyDoc_DeleteItemNotify;
                 assemblyDoc.ComponentStateChangeNotify3 -= AssemblyDoc_ComponentStateChangeNotify3;
+             
+
             }
 
             base.AttachEventHandlers();
 
         }
+     
 
         private int AssemblyDoc_AddItemNotify(int EntityType, string itemName)
         {

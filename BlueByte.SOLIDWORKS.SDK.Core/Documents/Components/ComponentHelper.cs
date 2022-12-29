@@ -35,7 +35,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
 
             swComponent.IsSmartComponent = component.IsSmartComponent();
 
-            var documentManager = Component.DocumentManager;
+            var documentManager = Globals.DocumentManager;
 
             var document = default(IDocument);
 

@@ -4,9 +4,10 @@ using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
 {
+
+
     public class Component : IComponent
     {
-        public static IDocumentManager DocumentManager { get; set; }
 
         public string GetNameRelativeTo(IComponent rootComponent)
         {
@@ -70,7 +71,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
         /// </summary>
         /// <param name="child">The child.</param>
         /// <exception cref="System.ArgumentNullException">child</exception>
-        void AddChild(IComponent child)
+        public void AddChild(IComponent child)
         {
             if (child == null)
                 throw new ArgumentNullException(nameof(child));
@@ -93,7 +94,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
         /// </summary>
         /// <param name="child">The child.</param>
         /// <exception cref="System.ArgumentNullException">child</exception>
-        void RemoveChild(IComponent child)
+        public void RemoveChild(IComponent child)
         {
             if (child == null)
                 throw new ArgumentNullException(nameof(child));
@@ -109,6 +110,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
             l.Remove(child);
 
             this.Children = l.ToArray();
+        }
+
+
+        public override string ToString()
+        {
+            if (this.Document != null)
+                return $"{this.Document.FileName} [{ReferencedConfiguration}]";
+
+            return base.ToString();
         }
     }
 }
