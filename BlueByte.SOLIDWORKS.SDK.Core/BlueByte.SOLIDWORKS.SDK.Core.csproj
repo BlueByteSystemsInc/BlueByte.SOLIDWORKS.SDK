@@ -72,9 +72,11 @@
     <Compile Include="Documents\Components\ComponentHelper.cs" />
     <Compile Include="Documents\Components\ComponentRemovedEventArgs.cs" />
     <Compile Include="Documents\Components\ComponentStateChangedEventArgs.cs" />
+    <Compile Include="Documents\Drawing.cs" />
     <Compile Include="Documents\IAssembly.cs" />
     <Compile Include="Documents\Components\IComponent.cs" />
     <Compile Include="Documents\IDocumentManager.cs" />
+    <Compile Include="Documents\IDrawing.cs" />
     <Compile Include="Enums\DocumentAddOperationRet_e.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />

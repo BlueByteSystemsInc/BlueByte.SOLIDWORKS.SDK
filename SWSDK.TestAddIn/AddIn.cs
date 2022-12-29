@@ -77,11 +77,7 @@ namespace BlueByte.TestAddIn
 
         public void OnMenuClick()
         {
-
-
             Debug.Print($"There are {this.DocumentManager.GetDocuments().Length} open documents.");
-
-
         }
 
         private void DocumentManager_DocumentGotClosed(object sender, System.Tuple<IDocument, swDestroyNotifyType_e> e)

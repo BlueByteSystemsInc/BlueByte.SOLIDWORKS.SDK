@@ -18,9 +18,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region events 
 
-        public event EventHandler<ComponentAddedEventArgs> ComponentAdded;
-        public event EventHandler<ComponentRemovedEventArgs> ComponentRemoved;
-        public event EventHandler<ComponentStateChangedEventArgs> ComponentStateChanged;
+        public event EventHandler<ComponentAddedEventArgs> ComponentAdded = null;
+        public event EventHandler<ComponentRemovedEventArgs> ComponentRemoved = null;
+
+        // todo: not sure if we are going to need this in the future
+        //public event EventHandler<ComponentStateChangedEventArgs> ComponentStateChanged = null;
 
         #endregion
 
@@ -134,6 +136,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             assembly.Initialize(component.ReferencedConfiguration);
                         }
                     }
+
+
                     break;
                 case swComponentSuppressionState_e.swComponentResolved:
                     {
