@@ -1,5 +1,6 @@
 ﻿using SolidWorks.Interop.swconst;
 using System;
+using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
 {
@@ -60,6 +61,54 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
                 child.Initialize();
 
 
+        }
+
+
+
+        /// <summary>
+        /// Adds the child.
+        /// </summary>
+        /// <param name="child">The child.</param>
+        /// <exception cref="System.ArgumentNullException">child</exception>
+        void AddChild(IComponent child)
+        {
+            if (child == null)
+                throw new ArgumentNullException(nameof(child));
+
+            if (this.Children == null)
+                this.Children = new IComponent[] { };
+
+
+            
+
+            var l = this.Children.ToList();
+
+            l.Add(child);
+
+            this.Children = l.ToArray();
+        }
+
+        /// <summary>
+        /// Adds the child.
+        /// </summary>
+        /// <param name="child">The child.</param>
+        /// <exception cref="System.ArgumentNullException">child</exception>
+        void RemoveChild(IComponent child)
+        {
+            if (child == null)
+                throw new ArgumentNullException(nameof(child));
+
+            if (this.Children == null)
+                return;
+
+
+
+
+            var l = this.Children.ToList();
+
+            l.Remove(child);
+
+            this.Children = l.ToArray();
         }
     }
 }

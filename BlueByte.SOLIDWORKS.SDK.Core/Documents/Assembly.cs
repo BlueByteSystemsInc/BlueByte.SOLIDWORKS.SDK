@@ -65,7 +65,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     if (component != null)
                         components.Add(component);
                 }
-
+                
                 RootComponent.Children = components.ToArray();                
             }
 
@@ -177,12 +177,73 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         private int AssemblyDoc_AddItemNotify(int EntityType, string itemName)
         {
-            
+            var entityType = (swNotifyEntityType_e)EntityType;
+
+
+            switch (entityType)
+            {
+
+                case swNotifyEntityType_e.swNotifyComponent:
+                    {
+                        var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
+                        var component = swComponent.ToIComponent();
+                        RootComponent.AddChild(component);
+                    }
+                    break;
+                case swNotifyEntityType_e.swNotifyConfiguration:
+                    break;
+                case swNotifyEntityType_e.swNotifyFeature:
+                    break;
+                case swNotifyEntityType_e.swNotifyDerivedConfiguration:
+                    break;
+                case swNotifyEntityType_e.swNotifyDrawingSheet:
+                    break;
+                case swNotifyEntityType_e.swNotifyDrawingView:
+                    break;
+                case swNotifyEntityType_e.swNotifyBlockDef:
+                    break;
+                case swNotifyEntityType_e.swNotifyComponentInternal:
+                    break;
+                default:
+                    break;
+            }
+
             return 0;
         }
 
         private int AssemblyDoc_DeleteItemNotify(int EntityType, string itemName)
         {
+            var entityType = (swNotifyEntityType_e)EntityType;
+
+
+            switch (entityType)
+            {
+
+                case swNotifyEntityType_e.swNotifyComponent:
+                    {
+                        var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
+                        var component = swComponent.ToIComponent();
+                        RootComponent.RemoveChild(component);
+                    }
+                    break;
+                case swNotifyEntityType_e.swNotifyConfiguration:
+                    break;
+                case swNotifyEntityType_e.swNotifyFeature:
+                    break;
+                case swNotifyEntityType_e.swNotifyDerivedConfiguration:
+                    break;
+                case swNotifyEntityType_e.swNotifyDrawingSheet:
+                    break;
+                case swNotifyEntityType_e.swNotifyDrawingView:
+                    break;
+                case swNotifyEntityType_e.swNotifyBlockDef:
+                    break;
+                case swNotifyEntityType_e.swNotifyComponentInternal:
+                    break;
+                default:
+                    break;
+            }
+
             return 0;
         }
 

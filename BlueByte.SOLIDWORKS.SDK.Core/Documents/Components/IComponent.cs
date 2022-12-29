@@ -6,6 +6,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
     {
         IComponent[] Children { get; set; }
 
+        void AddChild(IComponent child);
+
+        void RemoveChild(IComponent child);
+
         bool IsVirtual { get; set; }
 
         swComponentSuppressionState_e SuppressionState { get; set; }
