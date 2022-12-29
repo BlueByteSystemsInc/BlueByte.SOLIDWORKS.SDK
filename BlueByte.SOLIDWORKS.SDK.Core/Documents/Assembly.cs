@@ -193,6 +193,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
                         var component = swComponent.ToIComponent();
                         RootComponent.AddChild(component);
+                        ComponentAdded?.Invoke(this, ComponentAddedEventArgs.New(component));
                     }
                     break;
                 case swNotifyEntityType_e.swNotifyConfiguration:
@@ -229,6 +230,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
                         var component = swComponent.ToIComponent();
                         RootComponent.RemoveChild(component);
+                        ComponentRemoved?.Invoke(this, ComponentRemovedEventArgs.New(component));
+
                     }
                     break;
                 case swNotifyEntityType_e.swNotifyConfiguration:
