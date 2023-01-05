@@ -15,11 +15,17 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
     /// <seealso cref="BlueByte.SOLIDWORKS.SDK.Core.ISOLIDWORKSApplication" />
     internal class SOLIDWORKSApplication : SOLIDWORKSObject, ISOLIDWORKSApplication
     {
+
+
+
         internal SOLIDWORKSApplication(SldWorks Sldworks) : base()
         {
             this.UnSafeObject = Sldworks;
+
+
         }
 
+        
 
         public void SendWarningMessage(string message)
         {

@@ -2,6 +2,7 @@
 using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
 using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.Diagnostics;
+using BlueByte.SOLIDWORKS.SDK.UI;
 using Microsoft.Win32;
 using SimpleInjector;
 using SolidWorks.Interop.sldworks;
@@ -38,8 +39,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 information.AppendLine($"Process name = { process.ProcessName}");
                 information.AppendLine($"Process Id   = { process.Id}");
 
-
-                if (MessageBox.Show($"Attach Debugger? {information.ToString()}", $"{Identity.Name}", MessageBoxButtons.OKCancel) == DialogResult.OK)
+ 
+                if (WindowsHelper.ShowMessageBox($"Attach Debugger? {information.ToString()}",true, $"{Identity.Name}", MessageBoxButtons.OKCancel) == DialogResult.OK)
                     Debugger.Launch();
             }
         }
@@ -152,7 +153,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
             if (IsInitialized == false)
-                OnRegisterAdditionalTypes(Container);
+                RegisterTypes(Container);
 
 
             Logger = Container.GetInstance<ILogger>();
@@ -181,7 +182,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// Registers additional types.
         /// </summary>
         /// <param name="container"></param>
-        protected virtual void OnRegisterAdditionalTypes(Container container)
+        protected virtual void RegisterTypes(Container container)
         {
         }
 
@@ -221,7 +222,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         }
 
         /// <summary>
-        /// Connects to solidworks.
+        /// Connects to SOLIDWORKS.
         /// </summary>
         /// <param name="swApp">The sw application.</param>
         protected virtual void OnConnectToSOLIDWORKS(SldWorks swApp)
@@ -385,12 +386,19 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         {
             try
             {
-                this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
+                
+               
 
                 
+                this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
 
 
 
+                var app = this.Application.As<SldWorks>();
+
+
+                app.DestroyNotify += App_DestroyNotify;
+                
                 Init();
 
                 this.Cookie = Cookie;
@@ -425,10 +433,31 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
             return true;
         }
+
+        private int App_DestroyNotify()
+        {
+            OnAddInPreClose();
+
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Called before add-in is closed.
+        /// </summary>
+        public virtual void OnAddInPreClose()
+        {
+       
+        }
+
         public bool DisconnectFromSW()
         {
             try
             {
+
+                var app = this.Application.As<SldWorks>();
+                app.DestroyNotify -= App_DestroyNotify;
+                
                 DestroyMenus();
 
                 handler.CleanFiles();

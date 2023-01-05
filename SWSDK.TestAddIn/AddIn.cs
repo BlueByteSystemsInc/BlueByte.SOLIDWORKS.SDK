@@ -29,11 +29,21 @@ namespace BlueByte.TestAddIn
 
 
         #endregion
-         
+
+
+        protected override void RegisterDefaultTypes()
+        {
+            base.RegisterDefaultTypes();
+
+            
+
+        }
 
         protected override void OnConnectToSOLIDWORKS(SldWorks swApp)
         {
             base.OnConnectToSOLIDWORKS(swApp);
+            
+            
             
             AttachDebugger();
 

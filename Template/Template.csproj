@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4A7BE2DD-5EB4-4E9D-9742-7777009CE6CD}</ProjectGuid>
+    <ProjectGuid>{33A63236-83F5-46AB-8C70-095EFBCBF671}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlueByte.SOLIDWORKS.SDK.Core</RootNamespace>
-    <AssemblyName>BlueByte.SOLIDWORKS.SDK.Core</AssemblyName>
+    <RootNamespace>Template</RootNamespace>
+    <AssemblyName>Template</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -29,16 +29,17 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <DocumentationFile>bin\Release\BlueByte.SOLIDWORKS.SDK.Core.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BlueByte.SOLIDWORKS.SDK, Version=2021.0.3.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.3\lib\net46\BlueByte.SOLIDWORKS.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="BlueByte.SOLIDWORKS.SDK.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.3\lib\net46\BlueByte.SOLIDWORKS.SDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=5.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.5.4.1\lib\net45\SimpleInjector.dll</HintPath>
+    </Reference>
     <Reference Include="SolidWorks.Interop.sldworks, Version=29.1.0.61, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
       <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2021.3.0\lib\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -65,34 +66,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomProperties\ChangeType.cs" />
-    <Compile Include="CustomProperties\CustomPropertyChangedEventArgs.cs" />
-    <Compile Include="CustomProperties\ICustomPropertyManager.cs" />
-    <Compile Include="Documents\Assembly.cs" />
-    <Compile Include="Documents\Components\Component.cs" />
-    <Compile Include="Documents\Components\ComponentAddedEventArgs.cs" />
-    <Compile Include="Documents\Components\ComponentHelper.cs" />
-    <Compile Include="Documents\Components\ComponentRemovedEventArgs.cs" />
-    <Compile Include="Documents\Components\ComponentStateChangedEventArgs.cs" />
-    <Compile Include="Documents\Drawing.cs" />
-    <Compile Include="Documents\IAssembly.cs" />
-    <Compile Include="Documents\Components\IComponent.cs" />
-    <Compile Include="Documents\IDocumentManager.cs" />
-    <Compile Include="Documents\IDrawing.cs" />
-    <Compile Include="Enums\DocumentAddOperationRet_e.cs" />
-    <Compile Include="Documents\Document.cs" />
-    <Compile Include="Documents\DocumentManager.cs" />
-    <Compile Include="Documents\IDocument.cs" />
-    <Compile Include="Globals.cs" />
-    <Compile Include="ISOLIDWORKSApplication.cs" />
-    <Compile Include="ISOLIDWORKSObject.cs" />
-    <Compile Include="SOLIDWORKSObject.cs" />
+    <Compile Include="AddIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
