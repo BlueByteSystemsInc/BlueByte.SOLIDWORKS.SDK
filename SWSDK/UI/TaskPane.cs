@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace BlueByte.SOLIDWORKS.SDK.UI
 {
-    public static class TaskPane
+    /// <summary>
+    /// Taskpane helper class.
+    /// </summary>
+    public static class TaskPaneHelper 
     {
         /// <summary>
         /// Builds the task pane.
@@ -34,6 +37,9 @@ namespace BlueByte.SOLIDWORKS.SDK.UI
     }
 
 
+    /// <summary>
+    /// Task pane.
+    /// </summary>
     public interface ITaskPane 
     {
          

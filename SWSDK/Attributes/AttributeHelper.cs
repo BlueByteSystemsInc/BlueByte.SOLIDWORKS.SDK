@@ -4,6 +4,9 @@ using System.Reflection;
 
 namespace BlueByte.SOLIDWORKS.SDK.Attributes
 {
+    /// <summary>
+    /// AttributeHelper. Internal use.
+    /// </summary>
     public static class AttributeHelper
     {
         

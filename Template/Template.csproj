@@ -31,11 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BlueByte.SOLIDWORKS.SDK, Version=2021.0.3.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.3\lib\net46\BlueByte.SOLIDWORKS.SDK.dll</HintPath>
+    <Reference Include="BlueByte.SOLIDWORKS.SDK, Version=2021.0.4.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.4\lib\net46\BlueByte.SOLIDWORKS.SDK.dll</HintPath>
     </Reference>
     <Reference Include="BlueByte.SOLIDWORKS.SDK.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.3\lib\net46\BlueByte.SOLIDWORKS.SDK.Core.dll</HintPath>
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.4\lib\net46\BlueByte.SOLIDWORKS.SDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="SimpleInjector, Version=5.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.5.4.1\lib\net45\SimpleInjector.dll</HintPath>

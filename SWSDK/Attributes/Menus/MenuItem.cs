@@ -3,6 +3,10 @@ using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
 {
+    /// <summary>
+    /// SOLIDWORKS Menu.
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class MenuItemAttribute : Attribute
     {

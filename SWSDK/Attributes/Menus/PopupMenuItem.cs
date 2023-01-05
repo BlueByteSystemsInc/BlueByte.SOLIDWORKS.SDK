@@ -3,6 +3,10 @@ using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
 {
+    /// <summary>
+    /// SOLIDWORKS PopupMenu. This menu appears when you right-clicks on an entity in the 3D area or the feature tree.
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class PopMenuItemAttribute : Attribute
     {

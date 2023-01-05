@@ -5,6 +5,11 @@ using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
 {
+    /// <summary>
+    /// Custom property manager. For internal use. Please use <see cref="ICustomPropertyManager"/>
+    /// </summary>
+    /// <seealso cref="BlueByte.SOLIDWORKS.SDK.Core.CustomProperties.ICustomPropertyManager" />
+    /// <seealso cref="System.IDisposable" />
     public class CustomPropertyManager : ICustomPropertyManager, IDisposable
     {
         

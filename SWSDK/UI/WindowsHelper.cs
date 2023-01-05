@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace BlueByte.SOLIDWORKS.SDK.UI
 {
+    /// <summary>
+    /// Windows API helper. For internal use only.
+    /// </summary>
     public static class WindowsHelper
     {
         [CLSCompliant(false)]
