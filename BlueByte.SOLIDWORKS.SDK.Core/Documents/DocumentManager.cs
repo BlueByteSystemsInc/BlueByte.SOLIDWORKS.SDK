@@ -4,12 +4,27 @@ using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
-    public class DocumentManager : IDocumentManager, IDisposable
+    public class DocumentManager : IDocumentManager, IDisposable , INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         #region Public Events
+
 
         public event EventHandler<Tuple<IDocument, swDestroyNotifyType_e>> DocumentGotClosed;
 
@@ -17,11 +32,24 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public event EventHandler<IDocument> DocumentGotOpened;
 
+        public event EventHandler<SaveEventArgs> DocumentAboutToBeSavedAs;
+
+        public event EventHandler<IDocument> ActiveDocumentChanged;
+
         #endregion
 
         #region Public Properties
 
-        public ObservableCollection<IDocument> Documents { get; set; } = new ObservableCollection<IDocument>();
+
+        private IDocument activeDoc;
+
+        public IDocument ActiveDocument
+        {
+            get { return activeDoc; }
+            set { activeDoc = value; NotifyPropertyChanged(nameof(ActiveDocument)); }
+        }
+
+        ObservableCollection<IDocument> Documents { get; set; } = new ObservableCollection<IDocument>();
 
         internal SldWorks SwApp { get; }
 
@@ -32,11 +60,21 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public DocumentManager(ISOLIDWORKSApplication app)
         {
             SwApp = app.UnSafeObject;
+      
+            // there may be a better place to put this - i dont know where since we have decided not to use the service locator
+            Globals.DocumentManager = this;
         }
 
         #endregion
 
         #region Private Methods
+
+
+        public IDocument[] GetDocuments()
+        {
+            return Documents.ToArray();
+        }
+
 
         private void document_GotClosed(object sender, swDestroyNotifyType_e e)
         {
@@ -52,6 +90,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
                 case swDestroyNotifyType_e.swDestroyNotifyHidden:
                     {
+                        // document in memory just hidden
                         var document = sender as Document;
                         document.IsVisible = false;
                     }
@@ -95,6 +134,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public IDocument AddUnloadedDocument(string fileName)
         {
+
+            
+
             var _document = Document.New(null, fileName);
             if (_document.DocumentType == swDocumentTypes_e.swDocASSEMBLY)
                 _document = new Document(null, fileName);
@@ -110,29 +152,80 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
             _document.DettachEventHandlers();
             _document.AttachEventHandlers();
+
+            _document.GotClosed -= document_GotClosed;
             _document.GotClosed += document_GotClosed;
-            //DocumentManagerExtension.Add(Documents, _document);
+            Documents.Add(_document);
             return _document;
         }
 
         public void AttachEventHandlers()
         {
+            SwApp.ActiveModelDocChangeNotify += SwApp_ActiveModelDocChangeNotify; ;
             SwApp.FileOpenNotify2 += SwApp_FileOpenNotify2;
             SwApp.FileNewNotify2 += SwApp_FileNewNotify2;
         }
 
-        public void DeattachEventHandlers()
+        private int SwApp_ActiveModelDocChangeNotify()
         {
+            var modelDoc = SwApp.ActiveDoc as ModelDoc;
+
+            if (modelDoc == null)
+            {
+                ActiveDocument = null;
+                if (ActiveDocumentChanged != null)
+                    ActiveDocumentChanged.Invoke(this, null);
+                return 0;
+            }
+            
+            var doc = this.Documents.ToArray().FirstOrDefault(x => x.Equals(modelDoc.GetTitle()));
+            this.ActiveDocument = doc;
+
+            if (ActiveDocumentChanged != null)
+                ActiveDocumentChanged.Invoke(this, doc);
+
+
+            return 0;
+        }
+
+        public void DettachEventHandlers()
+        {
+            SwApp.ActiveModelDocChangeNotify -= SwApp_ActiveModelDocChangeNotify;
             SwApp.FileOpenNotify2 -= SwApp_FileOpenNotify2;
             SwApp.FileNewNotify2 -= SwApp_FileNewNotify2;
+
+
+            // remove internal events
+            DocumentGotClosed = null;
+            DocumentGotOpened = null;
+            DocumentGotCreated = null;
+            DocumentAboutToBeSavedAs = null;
         }
 
         public void Dispose()
         {
-            DeattachEventHandlers();
+            DettachEventHandlers();
+
+
+            foreach (var document in this.Documents)
+                document.Dispose();
+
+            this.Documents.Clear();
         }
 
-        public Dictionary<IDocument, DocumentAddOperationRet_e> LoadExistingDocuments()
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
+        public void InitializeWithPreloadedDocuments()
+        {
+            GetExistingDocuments();
+
+        }
+
+
+
+        
+        private Dictionary<IDocument, DocumentAddOperationRet_e> GetExistingDocuments()
         {
             var retValue = new Dictionary<IDocument, DocumentAddOperationRet_e>();
             var iteratingModel = SwApp.GetFirstDocument() as ModelDoc2;
@@ -187,6 +280,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         Document.DettachEventHandlers();
                         Document.AttachEventHandlers();
                         Document.GotClosed += document_GotClosed;
+                        Document.BeforeSavedAs += document_BeforeSavedAs;
                         retValue = DocumentAddOperationRet_e.ReloadedInMemory;
                         addNewDocument = false;
                         retDocument = Document;
@@ -209,13 +303,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 if (model.GetType() == (int)swDocumentTypes_e.swDocASSEMBLY)
                 {
-                    IAssembly assembly = new Document(model, model.GetPathName());
+                    IAssembly assembly = new Assembly(model, model.GetPathName(), true);
                     assembly.DettachEventHandlers();
                     assembly.AttachEventHandlers();
                     assembly.GotClosed += document_GotClosed;
-                    //DocumentManagerExtension.Add(Documents, assembly);
+                    assembly.BeforeSavedAs += document_BeforeSavedAs;
+                    Documents.Add(assembly);
                     retValue = DocumentAddOperationRet_e.Added;
                     retDocument = assembly;
+                    var configuration = model.GetActiveConfiguration() as Configuration;
+                    assembly.Initialize(configuration.Name);
                 }
                 else
                 {
@@ -223,7 +320,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     newDocument.DettachEventHandlers();
                     newDocument.AttachEventHandlers();
                     newDocument.GotClosed += document_GotClosed;
-                    //DocumentManagerExtension.Add(Documents, newDocument);
+                    newDocument.BeforeSavedAs += document_BeforeSavedAs;
+                    Documents.Add(newDocument);
                     retValue = DocumentAddOperationRet_e.Added;
                     retDocument = newDocument;
                 }
@@ -232,8 +330,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             return new Tuple<IDocument, DocumentAddOperationRet_e>(retDocument, retValue);
         }
 
+        private void document_BeforeSavedAs(object sender, SaveEventArgs e)
+        {
+            DocumentAboutToBeSavedAs?.Invoke(this, e);
+        }
+
         #endregion
     }
+
+
+    
 }
 
 

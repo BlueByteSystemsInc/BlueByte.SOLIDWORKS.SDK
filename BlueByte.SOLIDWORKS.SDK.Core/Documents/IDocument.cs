@@ -1,4 +1,6 @@
-﻿using SolidWorks.Interop.swconst;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.CustomProperties;
+using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+using SolidWorks.Interop.swconst;
 using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
@@ -10,6 +12,39 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     /// <seealso cref="System.IDisposable" />
     public interface IDocument : ISOLIDWORKSObject, IDisposable
     {
+        #region events 
+        /// <summary>
+        /// Occurs when [custom property changed].
+        /// </summary>
+        event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyChanged;
+        /// <summary>
+        /// Occurs when [custom property added].
+        /// </summary>
+        event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyAdded;
+        /// <summary>
+        /// Occurs when [custom property deleted].
+        /// </summary>
+        event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
+
+        #endregion
+
+
+        /// <summary>
+        /// Gets or sets the type of the document.
+        /// </summary>
+        /// <value>
+        /// The type of the document.
+        /// </value>
+        swDocumentTypes_e DocumentType { get;   }
+
+        /// <summary>
+        /// Gets the custom property manager.
+        /// </summary>
+        /// <value>
+        /// The custom property manager.
+        /// </value>
+        ICustomPropertyManager CustomPropertyManager { get;   set; }
+
         /// <summary>
         /// Gets a value indicating whether this document is visible.
         /// </summary>
@@ -34,7 +69,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </value>
         bool IsLoaded { get;   }
 
+        /// <summary>
+        /// Occurs when [got closed].
+        /// </summary>
         event EventHandler<swDestroyNotifyType_e> GotClosed;
+
+        /// <summary>
+        /// Occurs when [before saved as].
+        /// </summary>
+        event EventHandler<SaveEventArgs> BeforeSavedAs;
 
         /// <summary>
         /// Attaches the event handlers.
@@ -56,5 +99,21 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Refreshes this document.
         /// </summary>
         void Refresh();
+
+
+        /// <summary>
+        /// Equalses the specified document.
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        /// <returns></returns>
+        bool Equals(IDocument doc);
+
+
+        /// <summary>
+        /// Equalses the specified document.
+        /// </summary>
+        /// <param name="doc">file name.</param>
+        /// <returns></returns>
+        bool Equals(string filename);
     }
 }

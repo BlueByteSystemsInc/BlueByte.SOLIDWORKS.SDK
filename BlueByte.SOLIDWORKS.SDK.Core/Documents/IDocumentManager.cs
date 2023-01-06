@@ -1,8 +1,6 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using SolidWorks.Interop.swconst;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
@@ -11,18 +9,31 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     /// </summary>
     public interface IDocumentManager
     {
-        /// <summary>
-        /// Gets or sets the documents. Do not set, add, replace and remove items from this list.
-        /// </summary>
-        /// <value>
-        /// The documents.
-        /// </value>
-        ObservableCollection<IDocument> Documents { get; set; }
+
 
         /// <summary>
-        /// Occurs when [document got closed].
+        /// Gets the active document. This property implements <see cref="INotifyPropertyChanged"/>
+        /// </summary>
+        IDocument ActiveDocument { get; }
+
+
+        /// <summary>
+        /// Gets an array the open loaded and visible documents.
+        /// </summary>
+        /// <returns></returns>
+        IDocument[] GetDocuments();
+
+        /// <summary>
+        /// Occurs when [document got closed]. 
         /// </summary>
         event EventHandler<Tuple<IDocument, swDestroyNotifyType_e>> DocumentGotClosed;
+
+
+        /// <summary>
+        /// Occurs when <see cref="ActiveDocument"/> changes. The argument e might be null if there is no active document.
+        /// </summary>
+        event EventHandler<IDocument> ActiveDocumentChanged;
+
 
         /// <summary>
         /// Occurs when [document got created].
@@ -33,6 +44,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Occurs when [document got opened].
         /// </summary>
         event EventHandler<IDocument> DocumentGotOpened;
+
+
+        /// <summary>
+        /// Occurs when [document about to be saved as].
+        /// </summary>
+        event EventHandler<SaveEventArgs> DocumentAboutToBeSavedAs;
 
         /// <summary>
         /// Adds an unloaded document. i.e. document is a suppressed reference of another document. For example: suppressed component in an assembly.
@@ -49,7 +66,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <summary>
         /// Dettaches the event handlers.
         /// </summary>
-        void DeattachEventHandlers();
+        void DettachEventHandlers();
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -67,6 +84,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Loads the existing documents. Calls this after creating an instance of this class to load existing documents.
         /// </summary>
         /// <returns></returns>
-        Dictionary<IDocument, DocumentAddOperationRet_e> LoadExistingDocuments();
+        void InitializeWithPreloadedDocuments();
+
+
+
+
     }
 }

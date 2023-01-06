@@ -2,6 +2,7 @@
 using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
 using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.Diagnostics;
+using BlueByte.SOLIDWORKS.SDK.UI;
 using Microsoft.Win32;
 using SimpleInjector;
 using SolidWorks.Interop.sldworks;
@@ -38,8 +39,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 information.AppendLine($"Process name = { process.ProcessName}");
                 information.AppendLine($"Process Id   = { process.Id}");
 
-
-                if (MessageBox.Show($"Attach Debugger? {information.ToString()}", $"{Identity.Name}", MessageBoxButtons.OKCancel) == DialogResult.OK)
+ 
+                if (WindowsHelper.ShowMessageBox($"Attach Debugger? {information.ToString()}",true, $"{Identity.Name}", MessageBoxButtons.OKCancel) == DialogResult.OK)
                     Debugger.Launch();
             }
         }
@@ -53,9 +54,26 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
         BitmapHandler handler = new BitmapHandler();
 
-        #endregion 
+        #endregion
 
         #region properties 
+
+
+        /// <summary>
+        /// Gets the document manager.
+        /// </summary>
+        /// <value>
+        /// The document manager.
+        /// </value>
+        public IDocumentManager DocumentManager { get; private set; }
+
+        /// <summary>
+        /// Gets the custom property manager.
+        /// </summary>
+        /// <value>
+        /// The custom property manager.
+        /// </value>
+        public BlueByte.SOLIDWORKS.SDK.Core.CustomProperties.ICustomPropertyManager CustomPropertyManager { get; private set; }
 
         /// <summary>
         /// Gets the application.
@@ -135,7 +153,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
             if (IsInitialized == false)
-                OnRegisterAdditionalTypes(Container);
+                RegisterTypes(Container);
 
 
             Logger = Container.GetInstance<ILogger>();
@@ -164,7 +182,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// Registers additional types.
         /// </summary>
         /// <param name="container"></param>
-        protected virtual void OnRegisterAdditionalTypes(Container container)
+        protected virtual void RegisterTypes(Container container)
         {
         }
 
@@ -204,10 +222,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         }
 
         /// <summary>
-        /// Connects to solidworks.
+        /// Connects to SOLIDWORKS.
         /// </summary>
         /// <param name="swApp">The sw application.</param>
-        protected virtual void ConnectToSOLIDWORKS(SldWorks swApp)
+        protected virtual void OnConnectToSOLIDWORKS(SldWorks swApp)
         {
 
         }
@@ -300,16 +318,26 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                         break;
                 }
 
-                Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
-                Container.RegisterSingleton<IDocumentManager, DocumentManager>();
+                RegisterDefaultTypes();
 
             }
         }
 
 
-        #region com registration
+        /// <summary>
+        /// Registers the default types. Register as singletons both <see cref="SldWorks"/> and <see cref="IDocumentManager"/>
+        /// </summary>
+        protected virtual void RegisterDefaultTypes()
+        {
+            Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
+            Container.RegisterSingleton<IDocumentManager, DocumentManager>();
+            Container.RegisterSingleton<CustomProperties.ICustomPropertyManager, CustomProperties.CustomPropertyManager>();
+        }
 
-        [ComRegisterFunction]
+
+            #region com registration
+
+            [ComRegisterFunction]
         private static void RegisterAssembly(Type t)
         {
             try
@@ -358,12 +386,19 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         {
             try
             {
-                this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
+                
+               
 
                 
+                this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
 
 
 
+                var app = this.Application.As<SldWorks>();
+
+
+                app.DestroyNotify += App_DestroyNotify;
+                
                 Init();
 
                 this.Cookie = Cookie;
@@ -377,8 +412,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 BuildPopMenu();
 
 
+                // init document manager 
+                DocumentManager = Container.GetInstance<IDocumentManager>();
+                DocumentManager.AttachEventHandlers();
+                DocumentManager.InitializeWithPreloadedDocuments();
 
-                ConnectToSOLIDWORKS(this.Application.As<SldWorks>());
+                CustomPropertyManager = Container.GetInstance<CustomProperties.ICustomPropertyManager>();
+                CustomPropertyManager.Initialize();
+
+                OnConnectToSOLIDWORKS(this.Application.As<SldWorks>());
             }
             catch (Exception e)
             {
@@ -391,16 +433,51 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
             return true;
         }
+
+        private int App_DestroyNotify()
+        {
+            OnAddInPreClose();
+
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Called before add-in is closed.
+        /// </summary>
+        public virtual void OnAddInPreClose()
+        {
+       
+        }
+
         public bool DisconnectFromSW()
         {
             try
             {
+
+                var app = this.Application.As<SldWorks>();
+                app.DestroyNotify -= App_DestroyNotify;
+                
                 DestroyMenus();
 
                 handler.CleanFiles();
 
 
                 OnDisconnectFromSOLIDWORKS();
+
+                if (CustomPropertyManager != null)
+                    CustomPropertyManager.Dispose();
+
+                if (DocumentManager != null)
+                    DocumentManager.Dispose();
+
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(this.Application.UnSafeObject);
+
+                System.GC.Collect();
+                System.GC.Collect();
+
+                System.GC.WaitForPendingFinalizers();
+
             }
             catch (Exception)
             {

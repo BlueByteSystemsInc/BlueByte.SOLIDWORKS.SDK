@@ -3,6 +3,9 @@ using BlueByte.SOLIDWORKS.SDK.Exceptions;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core
 {
+    /// <summary>
+    /// Add-in Identity. This includes the name, description and the startup settings of the add-in.
+    /// </summary>
     public struct Identity
     {
         /// <summary>
@@ -34,7 +37,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// </summary>
         /// <param name="addin">The addin.</param>
         /// <returns></returns>
-        /// <exception cref="SWSDK.IdentityInfoException">
+        /// <exception cref="IdentityInfoException">
         /// Addin class is not decorated with NameAttribute. - null
         /// or
         /// Addin add-in has an empty name. - null

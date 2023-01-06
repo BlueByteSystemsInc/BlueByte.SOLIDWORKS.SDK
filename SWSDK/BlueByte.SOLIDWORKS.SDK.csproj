@@ -30,8 +30,21 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\BlueByte.SOLIDWORKS.SDK.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BlueByte.SOLIDWORKS.SDK, Version=2021.0.4.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.4\lib\net46\BlueByte.SOLIDWORKS.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="BlueByte.SOLIDWORKS.SDK.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acc8c9f838e26698, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.SDK.2021.0.4\lib\net46\BlueByte.SOLIDWORKS.SDK.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleInjector, Version=5.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.5.4.1\lib\net45\SimpleInjector.dll</HintPath>
     </Reference>
@@ -72,6 +85,7 @@
     <Compile Include="Attributes\StartUp.cs" />
     <Compile Include="Core\BitmapHandler.cs" />
     <Compile Include="Core\SOLIDWORKSApplication.cs" />
+    <Compile Include="CustomProperties\CustomPropertyManager.cs" />
     <Compile Include="Diagnostics\ConsoleLogger.cs" />
     <Compile Include="Diagnostics\FileLogger.cs" />
     <Compile Include="Core\Identity.cs" />
@@ -82,21 +96,17 @@
     <Compile Include="Diagnostics\LoggerType_e.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Diagnostics\SQLLogger.cs" />
+    <Compile Include="UI\TaskPane.cs" />
+    <Compile Include="UI\WindowsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Key.snk" />
     <None Include="package.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\Commands\" />
     <Folder Include="Enums\" />
-    <Folder Include="UI\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BlueByte.SOLIDWORKS.SDK.Core\BlueByte.SOLIDWORKS.SDK.Core.csproj">
-      <Project>{4a7be2dd-5eb4-4e9d-9742-7777009ce6cd}</Project>
-      <Name>BlueByte.SOLIDWORKS.SDK.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
