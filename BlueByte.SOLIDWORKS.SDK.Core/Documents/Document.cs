@@ -1,4 +1,5 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.CustomProperties;
+using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using BlueByte.SOLIDWORKS.SDK.CustomProperties;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
@@ -23,6 +24,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         #region events 
 
         public event EventHandler<swDestroyNotifyType_e> GotClosed;
+        public event EventHandler<SaveEventArgs> BeforeSavedAs;
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyChanged;
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyAdded;
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
@@ -141,6 +143,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (partDoc != null)
                         {
                             partDoc.DestroyNotify2 += document_DestroyNotify2;
+                            partDoc.FileSaveAsNotify2 += document_FileSaveAsNotify2;
                             partDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
                             partDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
                             partDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
@@ -153,6 +156,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (assemblyDoc != null)
                         {
                             assemblyDoc.DestroyNotify2 += document_DestroyNotify2;
+                            assemblyDoc.FileSaveAsNotify2 += document_FileSaveAsNotify2;
                             assemblyDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
                             assemblyDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
                             assemblyDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
@@ -165,6 +169,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (drawingDoc != null)
                         {
                             drawingDoc.DestroyNotify2 += document_DestroyNotify2;
+                            drawingDoc.FileSaveAsNotify2 += document_FileSaveAsNotify2;
                             drawingDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
                             drawingDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify; ;
                             drawingDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify; ;
@@ -178,9 +183,19 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             }
         }
 
- 
+        private int document_FileSaveAsNotify2(string FileName)
+        {
+            var eventArgs = SaveEventArgs.New(this, FileName);
 
-         
+            if (BeforeSavedAs != null)
+                BeforeSavedAs.Invoke(this, eventArgs);
+            
+            if (eventArgs.Handled)
+                return (int)HRESULT.S_False;
+
+            return (int)HRESULT.S_OK;
+
+        }
 
         public void Load(object UnsafeObject)
         {
@@ -313,6 +328,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     {
                         if (partDoc != null)
                         {
+                            partDoc.FileSaveAsNotify2 -= document_FileSaveAsNotify2;
                             partDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
                             partDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify;
                             partDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
@@ -325,6 +341,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     {
                         if (assemblyDoc != null)
                         {
+                            assemblyDoc.FileSaveAsNotify2 -= document_FileSaveAsNotify2;
+
                             assemblyDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
                             assemblyDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify;
                             assemblyDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
@@ -337,6 +355,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     {
                         if (drawingDoc != null)
                         {
+                            drawingDoc.FileSaveAsNotify2 -= document_FileSaveAsNotify2;
                             drawingDoc.DestroyNotify2 -= document_DestroyNotify2;
                             drawingDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
                             drawingDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify; ;
@@ -358,6 +377,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             CustomPropertyAdded = null;
             CustomPropertyDeleted = null;
             CustomPropertyChanged = null;
+            BeforeSavedAs = null;
 
             this.PropertyChanged -= Document_PropertyChanged;
 

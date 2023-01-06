@@ -83,9 +83,11 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\IDocument.cs" />
+    <Compile Include="Enums\HRESULT.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="ISOLIDWORKSApplication.cs" />
     <Compile Include="ISOLIDWORKSObject.cs" />
+    <Compile Include="SaveEventArgs.cs" />
     <Compile Include="SOLIDWORKSObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

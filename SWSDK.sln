@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueByte.SOLIDWORKS.SDK.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template", "Template\Template.csproj", "{33A63236-83F5-46AB-8C70-095EFBCBF671}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TemplateVB", "TemplateVB\TemplateVB.vbproj", "{BC5C23F1-4398-4678-94BC-4293E8BC9131}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIX", "SOLIDWORKSSDK\VSIX.csproj", "{AF27E4BD-B93E-45AA-B627-E9B7934C005F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{33A63236-83F5-46AB-8C70-095EFBCBF671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33A63236-83F5-46AB-8C70-095EFBCBF671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33A63236-83F5-46AB-8C70-095EFBCBF671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC5C23F1-4398-4678-94BC-4293E8BC9131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC5C23F1-4398-4678-94BC-4293E8BC9131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC5C23F1-4398-4678-94BC-4293E8BC9131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC5C23F1-4398-4678-94BC-4293E8BC9131}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF27E4BD-B93E-45AA-B627-E9B7934C005F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF27E4BD-B93E-45AA-B627-E9B7934C005F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF27E4BD-B93E-45AA-B627-E9B7934C005F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF27E4BD-B93E-45AA-B627-E9B7934C005F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

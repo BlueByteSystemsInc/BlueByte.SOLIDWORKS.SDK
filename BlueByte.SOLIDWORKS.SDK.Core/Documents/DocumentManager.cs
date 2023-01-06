@@ -32,7 +32,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public event EventHandler<IDocument> DocumentGotOpened;
 
-
+        public event EventHandler<SaveEventArgs> DocumentAboutToBeSavedAs;
 
         public event EventHandler<IDocument> ActiveDocumentChanged;
 
@@ -199,6 +199,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             DocumentGotClosed = null;
             DocumentGotOpened = null;
             DocumentGotCreated = null;
+            DocumentAboutToBeSavedAs = null;
         }
 
         public void Dispose()
@@ -279,6 +280,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         Document.DettachEventHandlers();
                         Document.AttachEventHandlers();
                         Document.GotClosed += document_GotClosed;
+                        Document.BeforeSavedAs += document_BeforeSavedAs;
                         retValue = DocumentAddOperationRet_e.ReloadedInMemory;
                         addNewDocument = false;
                         retDocument = Document;
@@ -305,6 +307,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     assembly.DettachEventHandlers();
                     assembly.AttachEventHandlers();
                     assembly.GotClosed += document_GotClosed;
+                    assembly.BeforeSavedAs += document_BeforeSavedAs;
                     Documents.Add(assembly);
                     retValue = DocumentAddOperationRet_e.Added;
                     retDocument = assembly;
@@ -317,6 +320,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     newDocument.DettachEventHandlers();
                     newDocument.AttachEventHandlers();
                     newDocument.GotClosed += document_GotClosed;
+                    newDocument.BeforeSavedAs += document_BeforeSavedAs;
                     Documents.Add(newDocument);
                     retValue = DocumentAddOperationRet_e.Added;
                     retDocument = newDocument;
@@ -324,6 +328,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             }
 
             return new Tuple<IDocument, DocumentAddOperationRet_e>(retDocument, retValue);
+        }
+
+        private void document_BeforeSavedAs(object sender, SaveEventArgs e)
+        {
+            DocumentAboutToBeSavedAs?.Invoke(this, e);
         }
 
         #endregion

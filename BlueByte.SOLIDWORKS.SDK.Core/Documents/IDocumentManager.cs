@@ -1,8 +1,6 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using SolidWorks.Interop.swconst;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
@@ -46,6 +44,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Occurs when [document got opened].
         /// </summary>
         event EventHandler<IDocument> DocumentGotOpened;
+
+
+        /// <summary>
+        /// Occurs when [document about to be saved as].
+        /// </summary>
+        event EventHandler<SaveEventArgs> DocumentAboutToBeSavedAs;
 
         /// <summary>
         /// Adds an unloaded document. i.e. document is a suppressed reference of another document. For example: suppressed component in an assembly.

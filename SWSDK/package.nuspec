@@ -20,8 +20,7 @@
     <!--*-->
     <releaseNotes>Framework for developing plug-ins for SOLIDWORKS</releaseNotes>
     <copyright>Copyright ©  2022</copyright>
-    <tags>
-    </tags>
+    <tags>SOLIDWORKS API, SOLIDWORKS</tags>
     <dependencies>
       <!--
       <dependency id="SampleDependency" version="1.0" />

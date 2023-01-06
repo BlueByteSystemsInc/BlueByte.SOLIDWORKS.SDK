@@ -69,7 +69,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </value>
         bool IsLoaded { get;   }
 
+        /// <summary>
+        /// Occurs when [got closed].
+        /// </summary>
         event EventHandler<swDestroyNotifyType_e> GotClosed;
+
+        /// <summary>
+        /// Occurs when [before saved as].
+        /// </summary>
+        event EventHandler<SaveEventArgs> BeforeSavedAs;
 
         /// <summary>
         /// Attaches the event handlers.
