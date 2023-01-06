@@ -60,6 +60,8 @@ namespace BlueByte.TestAddIn
         private void DocumentManager_DocumentAboutToBeSavedAs(object sender, SaveEventArgs e)
         {
             e.FileName = @"C:\Test.sldprt";
+
+            
         }
 
         private void CustomPropertyManager_CustomPropertyDeleted(object sender, SOLIDWORKS.SDK.CustomProperties.CustomPropertyChangedEventArgs e)
