@@ -36,6 +36,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             {
                 var information = new StringBuilder();
                 information.AppendLine();
+                information.AppendLine($"Add-in = {this.Identity.Name}");
                 information.AppendLine($"Process name = { process.ProcessName}");
                 information.AppendLine($"Process Id   = { process.Id}");
 
@@ -254,7 +255,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                     #endregion 
 
 
-                    if (menu.IsMenuItem)
+                    if (menu.IsTopLevelMenu)
                         menuIdsList.Add(new Tuple<int, int,string,string>(this.Application.As<SldWorks>().AddMenu((int)menu.DocumentType, menu.Text, menu.Position), (int)menu.DocumentType, menu.Text, string.Empty));
                     else
                         menuIdsList.Add(new Tuple<int, int, string, string>(this.Application.As<SldWorks>().AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath),(int)menu.DocumentType, menu.Text, string.Empty));

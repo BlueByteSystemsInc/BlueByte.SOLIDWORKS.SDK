@@ -25,7 +25,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
 
 
-        
+
+        /// <summary>
+        /// Gets the property names from the specified configuration. Get custom properties if <paramref name="configurationName"/> is ignored. 
+        /// </summary>
+        /// <param name="doc">Document</param>
+        /// <param name="configurationName">Name of the configuration.</param>
+        /// <returns>Array of property names</returns>
+        string[] GetNames(IDocument doc, string configurationName = "");
 
 
 
@@ -36,7 +43,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="value">The value.</param>
         /// <param name="configurationName"></param>
-        void Set(IDocument doc, string propertyName, object value, string configurationName = "");
+        swCustomInfoSetResult_e Set(IDocument doc, string propertyName, object value, string configurationName = "");
 
 
         /// <summary>
@@ -56,7 +63,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         /// <param name="value">The value.</param>
         /// <param name="dataType">Type of the data.</param>
         /// <param name="configurationName">Name of the configuration.</param>
-        void AddSafe(IDocument doc, string propertyName, object value, swCustomInfoType_e dataType = swCustomInfoType_e.swCustomInfoText, string configurationName = "");
+        swCustomInfoAddResult_e AddSafe(IDocument doc, string propertyName, object value, swCustomInfoType_e dataType = swCustomInfoType_e.swCustomInfoText, string configurationName = "");
         
 
             /// <summary>
