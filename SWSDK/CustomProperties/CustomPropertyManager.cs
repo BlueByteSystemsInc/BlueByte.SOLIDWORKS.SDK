@@ -1,7 +1,9 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.CustomProperties;
 using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using System;
+using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
 {
@@ -94,7 +96,21 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
 
         }
 
-        public void AddSafe(IDocument doc, string propertyName, object value, SolidWorks.Interop.swconst.swCustomInfoType_e dataType = SolidWorks.Interop.swconst.swCustomInfoType_e.swCustomInfoText, string configurationName = "")
+
+        public string[] GetNames(IDocument doc, string configurationName = "")
+        {
+            var modeldoc = doc.UnSafeObject as ModelDoc2;
+
+            
+            if (modeldoc == null)
+                throw new Exception("Could get the api model object to set the property.");
+
+            var ret = modeldoc.Extension.CustomPropertyManager[configurationName].GetNames() as object[];
+
+            return ret == null ? new string[] { } : ret.Cast<string>().ToArray();
+        }
+
+        public swCustomInfoAddResult_e AddSafe(IDocument doc, string propertyName, object value, SolidWorks.Interop.swconst.swCustomInfoType_e dataType = SolidWorks.Interop.swconst.swCustomInfoType_e.swCustomInfoText, string configurationName = "")
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -104,10 +120,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
             if (modeldoc == null)
                 throw new Exception("Could get the api model object to set the property.");
 
-            modeldoc.Extension.CustomPropertyManager[configurationName].Add3(propertyName, (int)dataType, value.ToString(), (int)SolidWorks.Interop.swconst.swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd);
+            return (swCustomInfoAddResult_e)modeldoc.Extension.CustomPropertyManager[configurationName].Add3(propertyName, (int)dataType, value.ToString(), (int)SolidWorks.Interop.swconst.swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd);
 
         }
-        public void Set(IDocument doc, string propertyName, object value, string configurationName = "")
+        public swCustomInfoSetResult_e Set(IDocument doc, string propertyName, object value, string configurationName = "")
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -117,7 +133,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
             if (modeldoc == null)
                 throw new Exception("Could get the api model object to set the property.");
 
-            modeldoc.Extension.CustomPropertyManager[configurationName].Set2(propertyName, value.ToString());
+            return (swCustomInfoSetResult_e)modeldoc.Extension.CustomPropertyManager[configurationName].Set2(propertyName, value.ToString());
 
         }
         public void Delete(IDocument doc, string propertyName, string configurationName = "")
