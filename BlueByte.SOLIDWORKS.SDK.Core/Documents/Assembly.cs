@@ -105,10 +105,25 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 assemblyDoc.AddItemNotify += AssemblyDoc_AddItemNotify;
                 assemblyDoc.DeleteItemNotify += AssemblyDoc_DeleteItemNotify;
                 assemblyDoc.ComponentStateChangeNotify3 += AssemblyDoc_ComponentStateChangeNotify3;
-    
+                assemblyDoc.ComponentConfigurationChangeNotify += AssemblyDoc_ComponentConfigurationChangeNotify;
+
             }
 
 
+        }
+
+        private int AssemblyDoc_ComponentConfigurationChangeNotify(string componentName, string oldConfigurationName, string newConfigurationName)
+        {
+            var swComponent = this.assemblyDoc.GetComponentByName(componentName) as Component2;
+
+            var app = Globals.Application.As<SldWorks>();
+
+            var component = this.RootComponent.Children.FirstOrDefault(x => app.IsSame(swComponent,x.UnsafeObject as Component2) == (int)swObjectEquality.swObjectSame);
+
+            if (component != null)
+                component.ReferencedConfiguration = newConfigurationName; 
+
+            return 0;
         }
 
         private int AssemblyDoc_ComponentStateChangeNotify3(object Component, string CompName, short oldCompState, short newCompState)
@@ -175,7 +190,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 assemblyDoc.AddItemNotify -= AssemblyDoc_AddItemNotify;
                 assemblyDoc.DeleteItemNotify -= AssemblyDoc_DeleteItemNotify;
                 assemblyDoc.ComponentStateChangeNotify3 -= AssemblyDoc_ComponentStateChangeNotify3;
-             
+                assemblyDoc.ComponentConfigurationChangeNotify -= AssemblyDoc_ComponentConfigurationChangeNotify;
+
 
             }
 
@@ -239,17 +255,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     }
                     break;
                 case swNotifyEntityType_e.swNotifyConfiguration:
-                    break;
                 case swNotifyEntityType_e.swNotifyFeature:
-                    break;
                 case swNotifyEntityType_e.swNotifyDerivedConfiguration:
-                    break;
                 case swNotifyEntityType_e.swNotifyDrawingSheet:
-                    break;
                 case swNotifyEntityType_e.swNotifyDrawingView:
-                    break;
                 case swNotifyEntityType_e.swNotifyBlockDef:
-                    break;
                 case swNotifyEntityType_e.swNotifyComponentInternal:
                     break;
                 default:

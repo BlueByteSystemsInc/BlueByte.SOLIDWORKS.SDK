@@ -13,6 +13,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
         {
             throw new NotImplementedException();
         }
+
         public string GetSelectionRelativeTo(IComponent rootComponent)
         {
             throw new NotImplementedException();

@@ -47,43 +47,13 @@ namespace BlueByte.TestAddIn
             
             AttachDebugger();
 
-            this.DocumentManager.DocumentGotOpened += DocumentManager_DocumentGotOpened;
-            this.DocumentManager.DocumentAboutToBeSavedAs += DocumentManager_DocumentAboutToBeSavedAs;
-            this.DocumentManager.DocumentGotCreated += DocumentManager_DocumentGotCreated;
-            this.DocumentManager.DocumentGotClosed += DocumentManager_DocumentGotClosed;
-            this.CustomPropertyManager.CustomPropertyAdded += CustomPropertyManager_CustomPropertyAdded;
-            this.CustomPropertyManager.CustomPropertyChanged += CustomPropertyManager_CustomPropertyChanged;
-            this.CustomPropertyManager.CustomPropertyDeleted += CustomPropertyManager_CustomPropertyDeleted;
+       
 
         }
 
-        private void DocumentManager_DocumentAboutToBeSavedAs(object sender, SaveEventArgs e)
-        {
-            e.FileName = @"C:\Test.sldprt";
+    
 
-            
-        }
-
-        private void CustomPropertyManager_CustomPropertyDeleted(object sender, SOLIDWORKS.SDK.CustomProperties.CustomPropertyChangedEventArgs e)
-        {
-
-            e.Handled = true;
-            this.Application.SendErrorMessage("This action is not permitted.");
-        }
-
-        private void CustomPropertyManager_CustomPropertyChanged(object sender, SOLIDWORKS.SDK.CustomProperties.CustomPropertyChangedEventArgs e)
-        {
-
-            e.Handled = true;
-            this.Application.SendErrorMessage("This action is not permitted.");
-        }
-
-        private void CustomPropertyManager_CustomPropertyAdded(object sender, SOLIDWORKS.SDK.CustomProperties.CustomPropertyChangedEventArgs e)
-        {
-            e.Handled = true;
-            this.Application.SendErrorMessage("This action is not permitted.");
-        }
-
+     
         protected override void OnDisconnectFromSOLIDWORKS()
         {
             base.OnDisconnectFromSOLIDWORKS();

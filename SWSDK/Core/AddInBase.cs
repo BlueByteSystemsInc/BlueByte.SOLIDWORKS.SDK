@@ -393,7 +393,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 
                 this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
 
-
+                Globals.Application = this.Application;
 
                 var app = this.Application.As<SldWorks>();
 
