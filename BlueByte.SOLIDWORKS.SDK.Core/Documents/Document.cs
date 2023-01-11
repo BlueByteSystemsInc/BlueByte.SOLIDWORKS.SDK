@@ -1,9 +1,11 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.CustomProperties;
 using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using BlueByte.SOLIDWORKS.SDK.CustomProperties;
+using BlueByte.SOLIDWORKS.SDK.Exceptions;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
+using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
@@ -50,6 +52,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
             }
         }
+
+        public string ActiveConfigurationName { get;   set; }
 
         public bool IsVisible { get; internal set; }
         
@@ -109,10 +113,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 {
                     case swDocumentTypes_e.swDocPART:
                         partDoc = model as PartDoc;
+                        ActiveConfigurationName = (model.GetActiveConfiguration() as Configuration).Name;
                         break;
 
                     case swDocumentTypes_e.swDocASSEMBLY:
                         assemblyDoc = model as AssemblyDoc;
+                        ActiveConfigurationName = (model.GetActiveConfiguration() as Configuration).Name;
                         break;
 
                     case swDocumentTypes_e.swDocDRAWING:
@@ -147,6 +153,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             partDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
                             partDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
                             partDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
+                            partDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
                         }
                     }
                     break;
@@ -161,6 +168,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             assemblyDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
                             assemblyDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
                             assemblyDoc.FileReloadNotify += document_FileReloadNotify;
+                            assemblyDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
                         }
                     }
                     break;
@@ -182,6 +190,56 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     break;
             }
         }
+
+        /// <summary>
+        /// Shows the specified configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <exception cref="BlueByte.SOLIDWORKS.SDK.Exceptions.SOLIDWORKSSDKException">
+        /// Cannot show configuration {configurationName} because document {this.FileName} is not loaded.
+        /// or
+        /// Configuration {configurationName} does exit in {this.FileName}.
+        /// or
+        /// Unsafe object failed to show configuration.
+        /// </exception>
+        public void ShowConfiguration(string configurationName)
+        {
+            if (this.IsLoaded == false)
+                throw new SOLIDWORKSSDKException($"Cannot show configuration {configurationName} because document {this.FileName} is not loaded.");
+
+            var model = UnSafeObject as ModelDoc2;
+
+            if (model == null) return;
+
+            
+            var configurationNames = model.GetConfigurationNames() as string[];
+
+            if (string.IsNullOrWhiteSpace(configurationNames.FirstOrDefault(x=> x.Equals(configurationName))))
+                    throw new SOLIDWORKSSDKException($"Configuration {configurationName} does exit in {this.FileName}.");
+
+
+            var showConfigurationRet = model.ShowConfiguration2(configurationName);
+
+            if (showConfigurationRet == false)
+                throw new SOLIDWORKSSDKException($"Unsafe object failed to show configuration.");
+
+        }
+
+
+        private int document_ActiveConfigChangePostNotify()
+        {
+            var model = UnSafeObject as ModelDoc2;
+
+            if (model == null) return 0;
+
+            var activeConfiguration = (model.GetActiveConfiguration() as Configuration).Name;
+
+            ActiveConfigurationName = activeConfiguration;  
+
+            return 0;
+        }
+
+   
 
         private int document_FileSaveAsNotify2(string FileName)
         {
@@ -333,6 +391,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             partDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify;
                             partDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
                             partDoc.DestroyNotify2 -= document_DestroyNotify2;
+                            partDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
                         }
                     }
                     break;
@@ -348,6 +407,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             assemblyDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
                             assemblyDoc.DestroyNotify2 -= document_DestroyNotify2;
                             assemblyDoc.FileReloadNotify -= document_FileReloadNotify;
+                            assemblyDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
                         }
                     }
                     break;

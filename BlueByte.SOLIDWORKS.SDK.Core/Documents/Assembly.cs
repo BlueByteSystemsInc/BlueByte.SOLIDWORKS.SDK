@@ -94,23 +94,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             traverse(this.RootComponent);
         }
 
-        public override void AttachEventHandlers()
-        {
-            base.AttachEventHandlers();
-
-            // attach event handlers 
-
-            if (assemblyDoc != null)
-            {
-                assemblyDoc.AddItemNotify += AssemblyDoc_AddItemNotify;
-                assemblyDoc.DeleteItemNotify += AssemblyDoc_DeleteItemNotify;
-                assemblyDoc.ComponentStateChangeNotify3 += AssemblyDoc_ComponentStateChangeNotify3;
-                assemblyDoc.ComponentConfigurationChangeNotify += AssemblyDoc_ComponentConfigurationChangeNotify;
-
-            }
-
-
-        }
+     
 
         private int AssemblyDoc_ComponentConfigurationChangeNotify(string componentName, string oldConfigurationName, string newConfigurationName)
         {
@@ -179,11 +163,29 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
             return 0;
         }
+        public override void AttachEventHandlers()
+        {
+            base.AttachEventHandlers();
+
+            // attach event handlers 
+
+            if (assemblyDoc != null)
+            {
+                assemblyDoc.AddItemNotify += AssemblyDoc_AddItemNotify;
+                assemblyDoc.DeleteItemNotify += AssemblyDoc_DeleteItemNotify;
+                assemblyDoc.ComponentStateChangeNotify3 += AssemblyDoc_ComponentStateChangeNotify3;
+                assemblyDoc.ComponentConfigurationChangeNotify += AssemblyDoc_ComponentConfigurationChangeNotify;
+          
+            }
+
+
+        }
+ 
 
         public override void DettachEventHandlers()
         {
 
-            // attach event handlers 
+            // dettach event handlers 
 
             if (assemblyDoc != null)
             {
@@ -191,7 +193,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 assemblyDoc.DeleteItemNotify -= AssemblyDoc_DeleteItemNotify;
                 assemblyDoc.ComponentStateChangeNotify3 -= AssemblyDoc_ComponentStateChangeNotify3;
                 assemblyDoc.ComponentConfigurationChangeNotify -= AssemblyDoc_ComponentConfigurationChangeNotify;
-
+              
 
             }
 

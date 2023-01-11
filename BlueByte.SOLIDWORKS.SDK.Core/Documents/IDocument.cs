@@ -13,6 +13,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
     public interface IDocument : ISOLIDWORKSObject, IDisposable
     {
         #region events 
+
+        
+
         /// <summary>
         /// Occurs when [custom property changed].
         /// </summary>
@@ -43,7 +46,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <value>
         /// The custom property manager.
         /// </value>
-        ICustomPropertyManager CustomPropertyManager { get;   set; }
+        ICustomPropertyManager CustomPropertyManager { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this document is visible.
@@ -60,6 +63,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// The name of the file.
         /// </value>
         string FileName { get;   }
+
+
+        
+
+
+        /// <summary>
+        /// Gets or sets the name of the active configuration.
+        /// </summary>
+        /// <value>
+        /// The name of the active configuration.
+        /// </value>
+        string ActiveConfigurationName { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this document is loaded.
@@ -113,7 +128,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Equalses the specified document.
         /// </summary>
         /// <param name="doc">file name.</param>
+        /// <param name="filename">filename.</param>
         /// <returns></returns>
         bool Equals(string filename);
+
+        /// <summary>
+        /// Shows the specified configuration.
+        /// </summary>
+        void ShowConfiguration(string configurationName);
     }
 }
