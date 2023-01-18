@@ -220,6 +220,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             GetExistingDocuments();
 
+
+            // get active document 
+            SwApp_ActiveModelDocChangeNotify();
         }
 
 

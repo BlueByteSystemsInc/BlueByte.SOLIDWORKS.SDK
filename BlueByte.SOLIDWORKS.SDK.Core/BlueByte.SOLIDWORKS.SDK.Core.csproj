@@ -83,8 +83,11 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\IDocument.cs" />
+    <Compile Include="Enums\EnumHelper.cs" />
     <Compile Include="Enums\FileExtension.cs" />
     <Compile Include="Enums\HRESULT.cs" />
+    <Compile Include="Enums\swDescriptiveFileSaveError_e.cs" />
+    <Compile Include="Enums\swDescriptiveFileWarningError_e.cs" />
     <Compile Include="Exceptions\IdentityInfoException.cs" />
     <Compile Include="Exceptions\SOLIDWORKSSDKException.cs" />
     <Compile Include="Globals.cs" />

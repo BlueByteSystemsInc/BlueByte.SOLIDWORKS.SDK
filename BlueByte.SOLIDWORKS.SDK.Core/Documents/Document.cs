@@ -5,6 +5,8 @@ using BlueByte.SOLIDWORKS.SDK.Exceptions;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
@@ -299,8 +301,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         }
 
 
-        public bool Save(FileExtension_e extensions = FileExtension_e.Default)
+
+        public SaveRet[] Save(FileExtension_e extensions = FileExtension_e.Default)
         {
+
+            var l = new List<SaveRet>();
 
             if (IsLoaded == false)
                 throw new SOLIDWORKSSDKException($"{FileName} is not loaded in memory.");
@@ -341,7 +346,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     case FileExtension_e.sldprt:
                     case FileExtension_e.sldasm:
                     case FileExtension_e.slddrw:
-                        status = model.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, errors, warnings);
+                        if (EnumHelper.Equals(e, this))
+                        {
+                            status = model.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, errors, warnings);
+                            l.Add(new SaveRet() { Errors = errors, Warnings = warnings, Success = status });
+                        
+                        }
                         break;
                     case FileExtension_e.stp:
                         status = false;
@@ -370,7 +380,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             }
 
 
-            return status;
+            return l.ToArray();
 
         }
 
@@ -577,4 +587,106 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             
         }
     }
+
+
+
+
 }
+
+public struct SaveRet
+{
+    /// <summary>
+    /// Gets or sets the extension.
+    /// </summary>
+    /// <value>
+    /// The extension.
+    /// </value>
+    public FileExtension_e Extension { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="SaveRet"/> is success.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if success; otherwise, <c>false</c>.
+    /// </value>
+    public bool Success { get; set; }
+    /// <summary>
+    /// Gets or sets the errors.
+    /// </summary>
+    /// <value>
+    /// The errors.
+    /// </value>
+    public int Errors { get; set; }
+    /// <summary>
+    /// Gets or sets the warnings.
+    /// </summary>
+    /// <value>
+    /// The warnings.
+    /// </value>
+    public int Warnings { get; set; }
+
+    /// <summary>
+    /// Gets the error.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="System.Exception"></exception>
+    public string[] GetErrors()
+    {
+        swDescriptiveFileSaveError_e e = (swDescriptiveFileSaveError_e)Errors;
+
+        var es = new List<string>();
+ 
+        var members = Enum.GetValues(typeof(swDescriptiveFileSaveError_e));
+
+        foreach (var member in members)
+        {
+            var m = (swDescriptiveFileSaveError_e)member;
+
+            if (e.HasFlag(e) == false)
+                continue;
+
+            es.Add(EnumHelper.DescriptionAttr<swDescriptiveFileSaveError_e>(m));
+        }
+
+
+
+        return es.ToArray();
+    }
+
+
+
+    /// <summary>
+    /// Gets the warning messages.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="System.Exception"></exception>
+    public string[] GetWarning()
+    {
+        swDescriptiveFileWarningError_e e = (swDescriptiveFileWarningError_e)Warnings;
+
+        var es = new List<string>();
+
+        var members = Enum.GetValues(typeof(swDescriptiveFileWarningError_e));
+
+        foreach (var member in members)
+        {
+
+            
+
+            var m = (swDescriptiveFileWarningError_e)member;
+
+            if (e.HasFlag(e) == false)
+                continue;
+
+            es.Add(EnumHelper.DescriptionAttr<swDescriptiveFileWarningError_e>(m));
+        }
+
+
+
+        return es.ToArray();
+    }
+}
+
+
+
+
+

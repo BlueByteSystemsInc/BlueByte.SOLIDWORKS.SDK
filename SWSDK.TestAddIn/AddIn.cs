@@ -2,6 +2,7 @@
 using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
 using BlueByte.SOLIDWORKS.SDK.Core;
 using BlueByte.SOLIDWORKS.SDK.Core.Documents;
+using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System.Diagnostics;
@@ -65,7 +66,13 @@ namespace BlueByte.TestAddIn
 
         public void OnMenuClick()
         {
-            Debug.Print($"There are {this.DocumentManager.GetDocuments().Length} open documents.");
+
+            var doc = this.DocumentManager.ActiveDocument;
+
+            var extensions = FileExtension_e.x_t | FileExtension_e.stp| FileExtension_e.x_t | FileExtension_e.slddrw | FileExtension_e.sldprt | FileExtension_e.sldasm| FileExtension_e.Default |  FileExtension_e.igs | FileExtension_e.pdf;
+
+            doc.Save(extensions);
+        
         }
 
         private void DocumentManager_DocumentGotClosed(object sender, System.Tuple<IDocument, swDestroyNotifyType_e> e)

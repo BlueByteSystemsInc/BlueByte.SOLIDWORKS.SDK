@@ -143,7 +143,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Saves the current document. True if saved, false if not. 
         /// </summary>
         /// <param name="extensions">Extensions. Enum supports flags.</param>
-        bool Save(FileExtension_e extensions = FileExtension_e.Default);
+        SaveRet[] Save(FileExtension_e extensions = FileExtension_e.Default);
     }
 
 
