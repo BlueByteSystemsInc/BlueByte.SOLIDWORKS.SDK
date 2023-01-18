@@ -83,6 +83,7 @@
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentManager.cs" />
     <Compile Include="Documents\IDocument.cs" />
+    <Compile Include="Enums\FileExtension.cs" />
     <Compile Include="Enums\HRESULT.cs" />
     <Compile Include="Exceptions\IdentityInfoException.cs" />
     <Compile Include="Exceptions\SOLIDWORKSSDKException.cs" />

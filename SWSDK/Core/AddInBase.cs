@@ -415,9 +415,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
                 // init document manager 
                 DocumentManager = Container.GetInstance<IDocumentManager>();
-                DocumentManager.AttachEventHandlers();
                 DocumentManager.InitializeWithPreloadedDocuments();
-
+                DocumentManager.AttachEventHandlers();
+                
                 CustomPropertyManager = Container.GetInstance<CustomProperties.ICustomPropertyManager>();
                 CustomPropertyManager.Initialize();
 

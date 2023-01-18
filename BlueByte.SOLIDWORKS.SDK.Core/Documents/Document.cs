@@ -299,9 +299,95 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         }
 
 
+        public bool Save(FileExtension_e extensions = FileExtension_e.Default)
+        {
+
+            if (IsLoaded == false)
+                throw new SOLIDWORKSSDKException($"{FileName} is not loaded in memory.");
+
+            if (UnSafeObject == null)
+                throw new SOLIDWORKSSDKException($"{FileName} is not loaded in memory.", new NullReferenceException(nameof(UnSafeObject)));
+
+            var model = UnSafeObject as ModelDoc2;
+
+            var swModExt = model.Extension;
+
+            bool status = false;
+
+            var filePath = model.GetPathName();
+
+             int errors = 0;
+            int warnings = 0;
+
+
+            if (string.IsNullOrWhiteSpace(model.GetPathName()))
+                throw new SOLIDWORKSSDKException($"{FileName} has not been saved before. Please use SaveAs before using this method.");
+
+
+
+            var members = Enum.GetValues(typeof(FileExtension_e));
+
+            foreach (var member in members)
+            {
+                var e = (FileExtension_e)member;
+
+                if (extensions.HasFlag(e) == false)
+                    continue;
+
+
+                switch (e)
+                {
+                    case FileExtension_e.Default:
+                    case FileExtension_e.sldprt:
+                    case FileExtension_e.sldasm:
+                    case FileExtension_e.slddrw:
+                        status = model.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, errors, warnings);
+                        break;
+                    case FileExtension_e.stp:
+                        status = false;
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".stp");
+                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        break;
+                    case FileExtension_e.x_t:
+                        status = false;
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".x_t");
+                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        break;
+                    case FileExtension_e.pdf:
+                        status = false;
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".pdf");
+                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        break;
+                    case FileExtension_e.igs:
+                        status = false;
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".igs");
+                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+
+            return status;
+
+        }
+
         private int document_FileReloadNotify()
         {
-            throw new NotImplementedException();
+
+            var application = Globals.Application.As<SldWorks>();
+
+            if (string.IsNullOrWhiteSpace(this.FileName))
+                return 0;
+
+            var modelDoc = application.GetOpenDocumentByName(this.FileName);
+
+            if (modelDoc != null)
+            this.Load(modelDoc);
+
+            return 0;
         }
        
 
@@ -313,7 +399,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             if (eventArgs.Handled)
             {
                 this.DettachEventHandlers();
-                CustomPropertyManager.Set(this, propName, NewValue == null ? String.Empty : NewValue.ToLower(), Configuration);
+                CustomPropertyManager.Set(this, propName, NewValue == null ? String.Empty : oldValue.ToLower(), Configuration);
                 this.AttachEventHandlers();
 
             }

@@ -1,4 +1,5 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.CustomProperties;
+using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using BlueByte.SOLIDWORKS.SDK.CustomProperties;
 using SolidWorks.Interop.swconst;
 using System;
@@ -127,7 +128,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <summary>
         /// Equalses the specified document.
         /// </summary>
-        /// <param name="doc">file name.</param>
         /// <param name="filename">filename.</param>
         /// <returns></returns>
         bool Equals(string filename);
@@ -136,5 +136,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Shows the specified configuration.
         /// </summary>
         void ShowConfiguration(string configurationName);
+
+
+
+        /// <summary>
+        /// Saves the current document. True if saved, false if not. 
+        /// </summary>
+        /// <param name="extensions">Extensions. Enum supports flags.</param>
+        bool Save(FileExtension_e extensions = FileExtension_e.Default);
     }
+
+
+    
 }
