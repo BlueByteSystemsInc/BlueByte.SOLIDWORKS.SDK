@@ -39,10 +39,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Enums
         /// <summary>
         /// IGS
         /// </summary>
-        igs
-
-
-       
-
+        igs,
+        dxf,
+        iges
     }
 }

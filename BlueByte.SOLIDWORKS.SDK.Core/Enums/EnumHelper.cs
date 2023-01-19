@@ -22,7 +22,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Enums
             switch (e)
             {
                 case FileExtension_e.Default:
-                    break;
+                    return true;
                 case FileExtension_e.sldprt:
                     if (doc.DocumentType == SolidWorks.Interop.swconst.swDocumentTypes_e.swDocPART)
                         return true;

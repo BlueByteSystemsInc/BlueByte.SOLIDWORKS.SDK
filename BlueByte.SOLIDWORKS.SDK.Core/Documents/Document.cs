@@ -350,32 +350,33 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         {
                             status = model.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, errors, warnings);
                             l.Add(new SaveRet() { Errors = errors, Warnings = warnings, Success = status });
-                        
                         }
-                        break;
+                        continue;
                     case FileExtension_e.stp:
-                        status = false;
                         filePath = System.IO.Path.ChangeExtension(filePath, ".stp");
-                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
                         break;
                     case FileExtension_e.x_t:
-                        status = false;
                         filePath = System.IO.Path.ChangeExtension(filePath, ".x_t");
-                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
                         break;
                     case FileExtension_e.pdf:
-                        status = false;
                         filePath = System.IO.Path.ChangeExtension(filePath, ".pdf");
-                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        break;
+                    case FileExtension_e.iges:
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".iges");
                         break;
                     case FileExtension_e.igs:
-                        status = false;
-                        filePath = System.IO.Path.ChangeExtension(filePath, ".igs");
-                        status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".igs"); 
+                        break;
+                    case FileExtension_e.dxf:
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".dxf");
                         break;
                     default:
                         break;
                 }
+
+                status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
+                l.Add(new SaveRet() { Errors = errors, Warnings = warnings, Success = status });
+
 
             }
 
@@ -593,6 +594,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
 }
 
+/// <summary>
+/// Save operation result.
+/// </summary>
 public struct SaveRet
 {
     /// <summary>

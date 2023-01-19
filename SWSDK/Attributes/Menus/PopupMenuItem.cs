@@ -52,7 +52,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// <term>Note</term>
         /// </listheader>   
         /// <term>
-        /// Specify the name of the menu for menuString (e.g., File, View, etc.) where you want your menu item to appear. If you do not specify menu string, then the menu item appears on the Tools menu below the Xpress Products menu item.
+        /// Specify the name of the menu for menuString (e.g., File, View, etc.) where you want your menu item to appear. If you do not specify menu string, then the menu item appears on the Tools menu below the X
+        /// ss Products menu item.
         /// </term>
         /// <term>
         /// Use the & symbol to include an accelerator key, e.g., MyItem@, adds MyItem to the File menu with an accelerator key. To display the accelerator key, press the Alt key. The accelerator key is underlined.

@@ -69,7 +69,7 @@ namespace BlueByte.TestAddIn
 
             var doc = this.DocumentManager.ActiveDocument;
 
-            var extensions = FileExtension_e.x_t | FileExtension_e.stp| FileExtension_e.x_t | FileExtension_e.slddrw | FileExtension_e.sldprt | FileExtension_e.sldasm| FileExtension_e.Default |  FileExtension_e.igs | FileExtension_e.pdf;
+            var extensions = FileExtension_e.x_t | FileExtension_e.stp | FileExtension_e.x_t | FileExtension_e.slddrw | FileExtension_e.sldprt | FileExtension_e.sldasm| FileExtension_e.Default |  FileExtension_e.igs | FileExtension_e.pdf;
 
             doc.Save(extensions);
         

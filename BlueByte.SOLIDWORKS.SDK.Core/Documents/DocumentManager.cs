@@ -114,6 +114,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     DocumentGotCreated(this, retAdd.Item1);
             }
 
+            // refresh active document
+            SwApp_ActiveModelDocChangeNotify();
+
             return 0;
         }
 
@@ -124,6 +127,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             var retAdd = GetDocumentFromUnsafeObject(model);
             if (DocumentGotOpened != null)
                 DocumentGotOpened(this, retAdd.Item1);
+
+
+            // refresh active document
+            SwApp_ActiveModelDocChangeNotify();
 
             return 0;
         }
