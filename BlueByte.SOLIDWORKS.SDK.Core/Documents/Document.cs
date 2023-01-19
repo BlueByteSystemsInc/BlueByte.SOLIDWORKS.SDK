@@ -349,7 +349,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (EnumHelper.Equals(e, this))
                         {
                             status = model.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, errors, warnings);
-                            l.Add(new SaveRet() { Errors = errors, Warnings = warnings, Success = status });
+                            l.Add(new SaveRet() { Extension = e, Errors = errors, Warnings = warnings, Success = status });
                         }
                         continue;
                     case FileExtension_e.stp:
@@ -375,7 +375,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 }
 
                 status = swModExt.SaveAs(filePath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);
-                l.Add(new SaveRet() { Errors = errors, Warnings = warnings, Success = status });
+                l.Add(new SaveRet() { Extension = e, Errors = errors, Warnings = warnings, Success = status });
 
 
             }
