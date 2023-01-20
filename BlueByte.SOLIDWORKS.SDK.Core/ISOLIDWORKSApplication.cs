@@ -40,7 +40,21 @@
         /// </summary>
         /// <param name="message">The message.</param>
         void SendInformationMessage(string message);
-       
+
+
+        /// <summary>
+        /// Gets the last save error message.
+        /// </summary>
+        /// <returns></returns>
+        string GetLastSaveErrorMessage();
+
+
+        /// <summary>
+        /// Gets the last 20 error message.
+        /// </summary>
+        /// <returns></returns>
+        string[] GetRecentErrors();
+
     }
 
 

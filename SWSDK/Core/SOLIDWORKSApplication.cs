@@ -43,6 +43,36 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             var swApp = this.UnSafeObject as SldWorks;
             swApp.SendMsgToUser2(message, (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
         }
+        public string GetLastSaveErrorMessage()
+        {
+            var swApp = this.UnSafeObject as SldWorks;
+            object varError;
+            object varPath;
+            var varMessage = swApp.GetLastSaveError(out varPath, out varError);
+
+            if (varError == null)
+                return string.Empty;
+
+            return varMessage.ToString();
+        }
+
+        public string[] GetRecentErrors()
+        {
+            var swApp = this.UnSafeObject as SldWorks;
+
+            object msgs;
+            object msgids;
+            object msgtypes;
+             
+            swApp.GetErrorMessages(out msgs, out msgids, out msgtypes);
+
+            var msgsArr = msgs as string[];
+
+            return msgsArr;
+        }
+
+
+        
     }
 
 
