@@ -20,6 +20,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
         }
 
+        public void Dispose()
+        {
+            this.UnSafeObject = null;
+        }
+
         
 
         public void SendWarningMessage(string message)

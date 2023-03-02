@@ -1,4 +1,5 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Core.Enums;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 
@@ -87,6 +88,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         void InitializeWithPreloadedDocuments();
 
 
+
+        void Refresh(SldWorks unsafeObject);
 
 
     }

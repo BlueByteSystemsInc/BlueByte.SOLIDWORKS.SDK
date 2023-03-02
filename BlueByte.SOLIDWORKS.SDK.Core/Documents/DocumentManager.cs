@@ -51,7 +51,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         ObservableCollection<IDocument> Documents { get; set; } = new ObservableCollection<IDocument>();
 
-        internal SldWorks SwApp { get; }
+        internal SldWorks SwApp { get; private set; }
 
         #endregion
 
@@ -136,6 +136,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Refreshes the specified sw application.
+        /// </summary>
+        /// <param name="swApp">The sw application.</param>
+        public void Refresh(SldWorks swApp)
+        {
+            SwApp = swApp;
+        }
 
         #region Public Methods
 
@@ -226,7 +236,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public void InitializeWithPreloadedDocuments()
         {
             GetExistingDocuments();
-
 
             // get active document 
             SwApp_ActiveModelDocChangeNotify();

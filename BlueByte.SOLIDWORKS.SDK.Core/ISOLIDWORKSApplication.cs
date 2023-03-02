@@ -1,9 +1,11 @@
-﻿namespace BlueByte.SOLIDWORKS.SDK.Core
+﻿using System;
+
+namespace BlueByte.SOLIDWORKS.SDK.Core
 {
     /// <summary>
     /// Wrapper over the <see cref="SolidWorks.Interop.sldworks.SldWorks"/> application.
     /// </summary>
-    public interface ISOLIDWORKSApplication
+    public interface ISOLIDWORKSApplication : IDisposable
     {
         /// <summary>
         /// Gets or sets the unsafe object.

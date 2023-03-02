@@ -106,7 +106,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// <value>
         /// The container.
         /// </value>
-        public static Container Container { get; private set; }
+        public Container Container { get; private set; }
 
         /// <summary>
         /// Gets the logger.
@@ -322,6 +322,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 RegisterDefaultTypes();
 
             }
+             
         }
 
 
@@ -330,6 +331,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         /// </summary>
         protected virtual void RegisterDefaultTypes()
         {
+
             Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
             Container.RegisterSingleton<IDocumentManager, DocumentManager>();
             Container.RegisterSingleton<CustomProperties.ICustomPropertyManager, CustomProperties.CustomPropertyManager>();
@@ -387,10 +389,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         {
             try
             {
-                
                
-
-                
                 this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
 
                 Globals.Application = this.Application;
@@ -459,6 +458,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             try
             {
 
+
+
                 var app = this.Application.As<SldWorks>();
                 app.DestroyNotify -= App_DestroyNotify;
                 
@@ -476,6 +477,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                     DocumentManager.Dispose();
 
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(this.Application.UnSafeObject);
+
+
+
+                this.Application.Dispose();
+
+
+                Container = null;
 
                 System.GC.Collect();
                 System.GC.Collect();

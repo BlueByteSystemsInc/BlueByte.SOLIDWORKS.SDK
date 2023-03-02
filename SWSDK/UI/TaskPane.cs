@@ -19,13 +19,13 @@ namespace BlueByte.SOLIDWORKS.SDK.UI
         /// <param name="taskPaneTitle">The task pane title.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">taskPaneTitle</exception>
-        public static ITaskPane BuildTaskPane(string TaskPaneProgID, string taskPaneTitle = "")
+        public static ITaskPane BuildTaskPane(SimpleInjector.Container Container, string TaskPaneProgID, string taskPaneTitle = "")
         {
 
             if (string.IsNullOrWhiteSpace(taskPaneTitle))
                 throw new ArgumentNullException(nameof(taskPaneTitle));
 
-            var solidworksApplication = AddInBase.Container.GetInstance<ISOLIDWORKSApplication>();
+            var solidworksApplication = Container.GetInstance<ISOLIDWORKSApplication>();
             var SOLIDWORKS = solidworksApplication.As<SolidWorks.Interop.sldworks.SldWorks>();
 
             // create taskpane
