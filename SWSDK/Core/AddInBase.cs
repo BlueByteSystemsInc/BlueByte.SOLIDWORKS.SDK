@@ -46,8 +46,27 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             }
         }
 
+        /// <summary>
+        /// Attaches the debugger.
+        /// </summary>
+        public static void StaticDebugger()
+        {
+            Process process = Process.GetCurrentProcess();
+            if (!Debugger.IsAttached)
+            {
+                var information = new StringBuilder();
+                information.AppendLine();
+                information.AppendLine($"Process name = { process.ProcessName}");
+                information.AppendLine($"Process Id   = { process.Id}");
 
-      
+
+                if (WindowsHelper.ShowMessageBox($"Attach Debugger? {information.ToString()}", true, string.Empty, MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    Debugger.Launch();
+            }
+        }
+
+
+
 
 
 
@@ -278,7 +297,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 foreach (var menu in menuItems)
-                    menuIdsList.Add(new Tuple<int, int, int, string, string, string>(this.Application.As<SldWorks>().AddMenuPopupItem3((int)menu.DocumentType, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Hint, menu.CustomNames),(int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
+                    menuIdsList.Add(new Tuple<int, int, int, string, string, string>(this.Application.As<SldWorks>().AddMenuPopupItem3((int)menu.DocumentType, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Text, menu.CustomNames),(int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
 
                 
             }
@@ -319,6 +338,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                         break;
                 }
 
+                Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
                 RegisterDefaultTypes();
 
             }
@@ -332,7 +352,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         protected virtual void RegisterDefaultTypes()
         {
 
-            Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
+          
             Container.RegisterSingleton<IDocumentManager, DocumentManager>();
             Container.RegisterSingleton<CustomProperties.ICustomPropertyManager, CustomProperties.CustomPropertyManager>();
         }
@@ -343,6 +363,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             [ComRegisterFunction]
         private static void RegisterAssembly(Type t)
         {
+
+             
+
             try
             {
                 var instance = Activator.CreateInstance(t);
@@ -354,6 +377,24 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 rk.SetValue("Title", identity.Name);
                 rk.SetValue("Description", identity.Description);
                 rk.SetValue("StartUp", identity.Enabled ? 1 : 0);
+
+
+                var icons = AttributeHelper.GetAttributes<IconAttribute>(instance);
+
+                if (icons != null)
+                {
+
+                    var icon = icons.FirstOrDefault();
+
+                    if (icon == null)
+                        return;
+
+                    var addinFolder = GetAddInDirectory(t);
+                    var imagePath = addinFolder.GetFiles().FirstOrDefault(x=> x.Name.ToLower().Equals(icon.IconFileName.ToLower()));
+               
+                    if (imagePath != null)
+                    rk.SetValue("Icon Path", imagePath.FullName);
+                }
             }
             catch (Exception ex)
             {
@@ -389,7 +430,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         {
             try
             {
-               
+
                 this.Application = new SOLIDWORKSApplication(ThisSW as SldWorks);
 
                 Globals.Application = this.Application;
@@ -398,30 +439,23 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 app.DestroyNotify += App_DestroyNotify;
-                
+
                 Init();
 
                 this.Cookie = Cookie;
 
 
-                // enable menu callbacks
-                 this.Application.As<SldWorks>().SetAddinCallbackInfo2(0, this, Cookie);
+                var ignoreUIHelper = AttributeHelper.GetFirstAttribute<IgnoreUI>(this);
+
+
+                if (ignoreUIHelper == null)
+                    this.Application.As<SldWorks>().SetAddinCallbackInfo2(0, this, Cookie);
 
 
                 BuildMenu();
                 BuildPopMenu();
 
-
-                // init document manager 
-                DocumentManager = Container.GetInstance<IDocumentManager>();
-                
-                DocumentManager.InitializeWithPreloadedDocuments();
-
-                DocumentManager.AttachEventHandlers();
-                
-                CustomPropertyManager = Container.GetInstance<CustomProperties.ICustomPropertyManager>();
-
-                CustomPropertyManager.Initialize();
+                CreateDefaultTypesInstances();
 
                 OnConnectToSOLIDWORKS(this.Application.As<SldWorks>());
             }
@@ -437,12 +471,49 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             return true;
         }
 
+        /// <summary>
+        /// Creates the default types instances namely <see cref="IDocumentManager"/> and <see cref="ICustomPropertyManager"/>
+        /// </summary>
+        public virtual void CreateDefaultTypesInstances()
+        {
+            // init document manager 
+            DocumentManager = Container.GetInstance<IDocumentManager>();
+
+            DocumentManager.InitializeWithPreloadedDocuments();
+
+            DocumentManager.AttachEventHandlers();
+
+            CustomPropertyManager = Container.GetInstance<CustomProperties.ICustomPropertyManager>();
+
+            CustomPropertyManager.Initialize();
+        }
+
         private int App_DestroyNotify()
         {
             OnAddInPreClose();
 
 
             return 0;
+        }
+
+
+        /// <summary>
+        /// Gets the add-in directory from the assembly of the add-in. 
+        /// </summary>
+        /// <returns></returns>
+        public static DirectoryInfo GetAddInDirectory(Type t)
+        {
+            return (new FileInfo(t.Assembly.Location)).Directory;
+        }
+
+
+        /// <summary>
+        /// Gets the add-in directory.
+        /// </summary>
+        /// <returns></returns>
+        public DirectoryInfo GetAddInDirectory()
+        {
+            return (new FileInfo(this.GetType().Assembly.Location)).Directory;
         }
 
         /// <summary>
@@ -453,6 +524,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
        
         }
 
+        /// <summary>
+        /// Disconnects from SOLIDWORKS. Do not call this method. Override <see cref="OnDisconnectFromSOLIDWORKS"/> and <see cref="OnAddInPreClose"/>
+        /// </summary>
+        /// <returns></returns>
         public bool DisconnectFromSW()
         {
             try

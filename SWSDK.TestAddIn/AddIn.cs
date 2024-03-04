@@ -5,6 +5,7 @@ using BlueByte.SOLIDWORKS.SDK.Core.Documents;
 using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -14,10 +15,11 @@ namespace BlueByte.TestAddIn
     [ComVisible(true)]
     [Guid("BF1C1567-53D8-4E2B-B588-0518A1EBFA55")]
 
+    [Icon("icon.ico")]
+
     [Name("Addin")]
     [Description("This is the description")]
     [StartUp(true)]
-    
     [MenuItem("SDK", swDocumentTypes_e.swDocNONE, true)]
     [MenuItem("Click Me...@SDK", swDocumentTypes_e.swDocNONE, false, nameof(OnMenuClick), "ToolbarSmall.bmp")]
     [MenuItem("SDK", swDocumentTypes_e.swDocPART, true)]
@@ -32,29 +34,45 @@ namespace BlueByte.TestAddIn
         #endregion
 
 
-        protected override void RegisterDefaultTypes()
-        {
-            base.RegisterDefaultTypes();
-
-            
-
-        }
+      
 
         protected override void OnConnectToSOLIDWORKS(SldWorks swApp)
         {
-            base.OnConnectToSOLIDWORKS(swApp);
-            
-            
-            
-            AttachDebugger();
 
-       
+            Debug.Print(Identity.Name);
+
+            
+            base.OnConnectToSOLIDWORKS(swApp);
+
+            this.DocumentManager.ActiveDocumentChanged += DocumentManager_ActiveDocumentChanged;
+
+
+
 
         }
 
-    
+        protected override void RegisterDefaultTypes()
+        {
 
-     
+
+
+        }
+        public override void CreateDefaultTypesInstances()
+        {
+
+        }
+
+        
+
+        private void DocumentManager_ActiveDocumentChanged(object sender, IDocument e)
+        {
+            if (e != null)
+            Debug.Print($"This document {e.FileName} has been activated.");
+            else 
+                Debug.Print($"There is no active document.");
+
+        }
+
         protected override void OnDisconnectFromSOLIDWORKS()
         {
             base.OnDisconnectFromSOLIDWORKS();
@@ -91,6 +109,17 @@ namespace BlueByte.TestAddIn
         {
             Debug.Print($"A document has been opened {e.FileName}.");
 
+        }
+
+        public void ExportIFC()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ExportIFCEnable()
+        {
+
+            return 1;
         }
 
         #endregion

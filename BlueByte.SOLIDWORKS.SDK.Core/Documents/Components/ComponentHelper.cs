@@ -15,6 +15,35 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
             return swComponent.ToIComponent();
 
         }
+
+
+        public static string GetPathName2(this Component2 component)
+        {
+            var pathName = component.GetPathName();
+
+            var m = component.GetModelDoc2() as ModelDoc2;
+            if (m != null)
+                pathName = m.GetPathName();
+
+            var illegals = new char[] { };
+
+            illegals = System.IO.Path.GetInvalidPathChars();
+
+
+
+
+            if (pathName.IndexOfAny(illegals) >= 0)
+            {
+                pathName = component.GetPathName().Split(new char[] { '\\' }).LastOrDefault();
+                pathName = System.IO.Path.Combine(@"C:\Temp\VirtualComponents\", pathName);
+            }
+
+
+
+            return pathName;
+
+        }
+
         public static IComponent ToIComponent(this Component2 component)
         {
             if (component == null)
@@ -31,17 +60,32 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
 
             swComponent.IsVirtual = component.IsVirtual;
 
+            swComponent.ComponentReference = component.ComponentReference;
+
             swComponent.IsSpeedPak = component.IsSpeedPak;
 
+            swComponent.ExcludedFromBOM = component.ExcludeFromBOM;
+
+            swComponent.IsEnvelope = component.IsEnvelope();
+
             swComponent.IsSmartComponent = component.IsSmartComponent();
+
+
+            swComponent.PathName = component.GetPathName2();
 
             var documentManager = Globals.DocumentManager;
 
             var document = default(IDocument);
 
             var documents = documentManager.GetDocuments().ToList();
-            
-            document = documents.FirstOrDefault(x => x.Equals(System.IO.Path.GetFileName(component.GetPathName())));
+
+            var pathName = component.GetPathName();
+
+            if (pathName.Contains("<"))
+                pathName = component.GetPathName2();
+
+
+            document = documents.FirstOrDefault(x => x.Equals(System.IO.Path.GetFileName(pathName)));
 
 
 
@@ -57,14 +101,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
                 case swComponentSuppressionState_e.swComponentFullyLightweight:
                 case swComponentSuppressionState_e.swComponentInternalIdMismatch:
                 default:
-                    documentManager.AddUnloadedDocument(component.GetPathName());
+                    documentManager.AddUnloadedDocument(pathName);
                    break;
                
             }
 
 
             documents = documentManager.GetDocuments().ToList();
-            document = documents.FirstOrDefault(x => x.Equals(System.IO.Path.GetFileName(component.GetPathName())));
+            document = documents.FirstOrDefault(x => x.Equals(System.IO.Path.GetFileName(pathName)));
 
 
             swComponent.Document = document;

@@ -13,6 +13,20 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
 
         /// <summary>
+        /// Activates the document. This uses <see cref="SldWorks.ActivateDoc3"/>/
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        void ActivateDocument(IDocument doc);
+
+
+        /// <summary>
+        /// Activates the document while suppressing warning dialogs.
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        void ActivateDocument2(IDocument doc);
+
+
+        /// <summary>
         /// Gets the active document. This property implements <see cref="INotifyPropertyChanged"/>
         /// </summary>
         IDocument ActiveDocument { get; }

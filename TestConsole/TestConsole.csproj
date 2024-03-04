@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{05381A48-E2B4-4DB3-AEFE-CC9D3E303272}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SWSDK.TestAddIn</RootNamespace>
-    <AssemblyName>SWSDK.TestAddIn</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <ProjectGuid>{46E9E008-B914-465D-9509-1C53CB131529}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TestConsole</RootNamespace>
+    <AssemblyName>TestConsole</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,43 +22,45 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RegisterForComInterop>true</RegisterForComInterop>
-    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-    <RegisterForComInterop>true</RegisterForComInterop>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BlueByte.SOLIDWORKS.Extensions, Version=2022.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.Extensions.2022.0.0\lib\net461\BlueByte.SOLIDWORKS.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="BlueByte.SOLIDWORKS.PDMProfessional.Extensions, Version=2021.0.30.0, Culture=neutral, PublicKeyToken=89f75b98047e27b7, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.PDMProfessional.Extensions.2021.0.30\lib\net461\BlueByte.SOLIDWORKS.PDMProfessional.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleInjector, Version=5.0.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.5.3.2\lib\net45\SimpleInjector.dll</HintPath>
+      <HintPath>..\packages\SimpleInjector.5.3.2\lib\net461\SimpleInjector.dll</HintPath>
     </Reference>
-    <Reference Include="SolidWorks.Interop.sldworks, Version=29.1.0.61, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2021.3.0\lib\SolidWorks.Interop.sldworks.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.sldworks, Version=30.4.0.45, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2022.4.0\lib\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands, Version=29.1.0.61, Culture=neutral, PublicKeyToken=0fda92720ba7919f, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2021.3.0\lib\SolidWorks.Interop.swcommands.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.swcommands, Version=30.4.0.45, Culture=neutral, PublicKeyToken=0fda92720ba7919f, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2022.4.0\lib\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swconst, Version=29.1.0.61, Culture=neutral, PublicKeyToken=19f43e188e4269d8, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2021.3.0\lib\SolidWorks.Interop.swconst.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.swconst, Version=30.4.0.45, Culture=neutral, PublicKeyToken=19f43e188e4269d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2022.4.0\lib\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swpublished, Version=29.1.0.61, Culture=neutral, PublicKeyToken=89a97bdc5284e6d8, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2021.3.0\lib\SolidWorks.Interop.swpublished.dll</HintPath>
+    <Reference Include="SolidWorks.Interop.swpublished, Version=30.4.0.45, Culture=neutral, PublicKeyToken=89a97bdc5284e6d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\BlueByte.SOLIDWORKS.Interops.2022.4.0\lib\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,29 +69,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddIn.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlueByte.SOLIDWORKS.SDK.Core\BlueByte.SOLIDWORKS.SDK.Core.csproj">
-      <Project>{4A7BE2DD-5EB4-4E9D-9742-7777009CE6CD}</Project>
+      <Project>{4a7be2dd-5eb4-4e9d-9742-7777009ce6cd}</Project>
       <Name>BlueByte.SOLIDWORKS.SDK.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SWSDK.TestAddIn\SWSDK.TestAddIn.csproj">
+      <Project>{05381a48-e2b4-4db3-aefe-cc9d3e303272}</Project>
+      <Name>SWSDK.TestAddIn</Name>
     </ProjectReference>
     <ProjectReference Include="..\SWSDK\BlueByte.SOLIDWORKS.SDK.csproj">
       <Project>{82771fab-c3c4-4106-8de0-ebbfeec7b204}</Project>
       <Name>BlueByte.SOLIDWORKS.SDK</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ToolbarSmall.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="icon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

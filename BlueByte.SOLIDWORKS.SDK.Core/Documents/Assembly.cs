@@ -1,4 +1,6 @@
-﻿using BlueByte.SOLIDWORKS.SDK.Core.Documents.Components;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.BillOfMaterials;
+using BlueByte.SOLIDWORKS.SDK.Core.Documents.Components;
+using BlueByte.SOLIDWORKS.SDK.Core.Models;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
@@ -43,6 +45,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         }
 
+        /// <summary>
+        /// Initializes the assembly hierarchy.
+        /// </summary>
+        /// <param name="referencedConfiguration">The referenced configuration.</param>
         public void Initialize(string referencedConfiguration)
         {
 
@@ -64,6 +70,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 {
                     var component = swComponent.ToIComponent();
 
+                    component.Parent = RootComponent;
+
                     if (component != null)
                         components.Add(component);
                 }
@@ -73,7 +81,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
 
             // recursively init components
-
             Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
 
             traverse = (Components.IComponent component) => {
@@ -84,6 +91,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     if (cs != null)
                     foreach (var c in cs)
                     {
+                        c.Parent = assembly.RootComponent;
                         c.Initialize();
                         traverse(c);
                     }
@@ -94,7 +102,101 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             traverse(this.RootComponent);
         }
 
-     
+
+        /// <summary>
+        /// Traverses the assembly component tree and do.
+        /// </summary>
+        /// <param name="doAction">The do action.</param>
+        public void TraverseAndDo(Action<Components.IComponent> doAction)
+        {
+            Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
+
+            traverse = (Components.IComponent component) => {
+ 
+                if (doAction != null)
+                    doAction.Invoke(component);
+
+                var children = component.Children;
+
+                foreach (var child in children)
+                    traverse(child);
+            };
+
+
+            traverse(RootComponent);
+        }
+
+        internal class Row
+        {
+            public string FileName { get; set; }
+
+            public Row Parent { get; set; }
+
+            public List<Row> Children { get; set; } = new List<Row>();
+
+            public int RowQuantity { get; set; }
+
+            public static Row FromComponent(Components.IComponent component)
+            {
+                var row = new Row();
+                row.FileName = component.Document.FileName;
+                row.RowQuantity = 1;
+                return row; 
+
+            }
+        }
+
+
+    
+
+        public List<Stuple<string, int>> GetQuantitiedReferences(BOMSettings bomSettings)
+        {
+         
+
+            var l = new List<Stuple<string, int>>();
+
+            var rootComponent = this.RootComponent;
+
+            Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
+
+            traverse = (Components.IComponent x) => 
+            {
+
+                if (bomSettings.IgnoreBOMExcludedComponents && x.ExcludedFromBOM)
+                    return;
+
+                if (bomSettings.IgnoreVirtualComponents && x.IsVirtual)
+                    return;
+
+                if (bomSettings.IgnoreEnvelopeComponents && x.IsEnvelope)
+                    return;
+
+                var f = System.IO.Path.GetFileName(x.PathName);
+
+                var i = l.FirstOrDefault(j => j.Item1.EndsWith(f, StringComparison.OrdinalIgnoreCase));
+
+                if (i == null)
+                {
+                    if (string.IsNullOrWhiteSpace(f) == false)
+                        l.Add(new Stuple<string, int>(f, 1));
+                }
+                else
+                    i.Item2 = i.Item2 + 1;
+
+
+                if (x.Children != null)
+                foreach (var component in x.Children)
+                    traverse(component);
+
+            };
+
+
+            traverse(rootComponent);
+
+            return l;
+        }
+
+
 
         private int AssemblyDoc_ComponentConfigurationChangeNotify(string componentName, string oldConfigurationName, string newConfigurationName)
         {
@@ -215,6 +317,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
                         var component = swComponent.ToIComponent();
                         RootComponent.AddChild(component);
+                        component.Parent = RootComponent;
                         ComponentAdded?.Invoke(this, ComponentAddedEventArgs.New(component));
                     }
                     break;

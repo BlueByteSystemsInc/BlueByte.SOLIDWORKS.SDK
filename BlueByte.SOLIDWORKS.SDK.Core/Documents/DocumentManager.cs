@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -63,6 +64,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
       
             // there may be a better place to put this - i dont know where since we have decided not to use the service locator
             Globals.DocumentManager = this;
+
+
+            this.Documents.CollectionChanged += Documents_CollectionChanged;
+        }
+
+        private void Documents_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+
+            if (this.Documents.Count == 0)
+                SwApp_ActiveModelDocChangeNotify();
         }
 
         #endregion
@@ -114,8 +125,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     DocumentGotCreated(this, retAdd.Item1);
             }
 
-            // refresh active document
-            SwApp_ActiveModelDocChangeNotify();
+
+            if ((NewDoc as ModelDoc2).Visible)
+                // refresh active document
+                SwApp_ActiveModelDocChangeNotify();
 
             return 0;
         }
@@ -129,6 +142,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 DocumentGotOpened(this, retAdd.Item1);
 
 
+            if (model.Visible)
             // refresh active document
             SwApp_ActiveModelDocChangeNotify();
 
@@ -136,6 +150,79 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Activates the document. This uses <see cref="SldWorks.ActivateDoc3"/>/
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        /// <exception cref="System.ArgumentNullException">doc</exception>
+        /// <exception cref="SDK.Exceptions.SOLIDWORKSSDKException"></exception>
+        public void ActivateDocument(IDocument doc)
+        {
+            if (doc == null)
+                throw new ArgumentNullException(nameof(doc));
+
+            if (doc.IsLoaded == false)
+                throw new SDK.Exceptions.SOLIDWORKSSDKException($"{doc.FileName} is not loaded and cannot be activated.");
+
+
+
+            int activationError = 0;
+            SwApp.ActivateDoc3(doc.FileName, false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+        
+        
+            var swActivateDocError_e = (swActivateDocError_e)activationError;
+
+            switch (swActivateDocError_e)
+            {
+                case SolidWorks.Interop.swconst.swActivateDocError_e.swGenericActivateError:
+                    // todo: add logic here to handle when activation generic error occurs
+                    break;
+                case SolidWorks.Interop.swconst.swActivateDocError_e.swDocNeedsRebuildWarning:
+                    // todo: add logic here to handle when a rebuild warning occurs
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        /// <summary>
+        /// Activates the document while suppressing warning dialogs.
+        /// </summary>
+        /// <param name="doc">The document.</param>
+        /// <exception cref="System.ArgumentNullException">doc</exception>
+        /// <exception cref="SDK.Exceptions.SOLIDWORKSSDKException"></exception>
+        public void ActivateDocument2(IDocument doc)
+        {
+            if (doc == null)
+                throw new ArgumentNullException(nameof(doc));
+
+            if (doc.IsLoaded == false)
+                throw new SDK.Exceptions.SOLIDWORKSSDKException($"{doc.FileName} is not loaded and cannot be activated.");
+
+
+
+            int activationError = 0;
+            SwApp.ActivateDoc2(doc.FileName, true, ref activationError);
+
+
+            var swActivateDocError_e = (swActivateDocError_e)activationError;
+
+            switch (swActivateDocError_e)
+            {
+                case SolidWorks.Interop.swconst.swActivateDocError_e.swGenericActivateError:
+                    // todo: add logic here to handle when activation generic error occurs
+                    break;
+                case SolidWorks.Interop.swconst.swActivateDocError_e.swDocNeedsRebuildWarning:
+                    // todo: add logic here to handle when a rebuild warning occurs
+                    break;
+                default:
+                    break;
+            }
+        }
+
 
 
         /// <summary>
@@ -178,15 +265,17 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public void AttachEventHandlers()
         {
-            SwApp.ActiveModelDocChangeNotify += SwApp_ActiveModelDocChangeNotify; ;
+            SwApp.ActiveModelDocChangeNotify += SwApp_ActiveModelDocChangeNotify;
+            SwApp.ActiveDocChangeNotify += SwApp_ActiveModelDocChangeNotify;
             SwApp.FileOpenNotify2 += SwApp_FileOpenNotify2;
             SwApp.FileNewNotify2 += SwApp_FileNewNotify2;
         }
 
         private int SwApp_ActiveModelDocChangeNotify()
         {
-            var modelDoc = SwApp.ActiveDoc as ModelDoc;
+            var modelDoc = SwApp.ActiveDoc as ModelDoc2;
 
+            // when there is no active doc document
             if (modelDoc == null)
             {
                 ActiveDocument = null;
@@ -195,7 +284,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 return 0;
             }
             
-            var doc = this.Documents.ToArray().FirstOrDefault(x => x.Equals(modelDoc.GetTitle()));
+            var doc = this.Documents.ToArray().FirstOrDefault(x => x.Equals(modelDoc.GetTitle2()));
+
+            // do not fire its the same document
+            if (this.ActiveDocument == doc)
+                return 0;
+
             this.ActiveDocument = doc;
 
             if (ActiveDocumentChanged != null)
@@ -207,6 +301,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public void DettachEventHandlers()
         {
+            SwApp.ActiveDocChangeNotify -= SwApp_ActiveModelDocChangeNotify;
             SwApp.ActiveModelDocChangeNotify -= SwApp_ActiveModelDocChangeNotify;
             SwApp.FileOpenNotify2 -= SwApp_FileOpenNotify2;
             SwApp.FileNewNotify2 -= SwApp_FileNewNotify2;
@@ -223,11 +318,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             DettachEventHandlers();
 
+            this.Documents.CollectionChanged -= Documents_CollectionChanged;
 
             foreach (var document in this.Documents)
                 document.Dispose();
 
             this.Documents.Clear();
+
+
+            ActiveDocument = null;
+
         }
 
         /// <summary>
@@ -261,6 +361,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         if (DocumentGotOpened != null)
                             DocumentGotOpened(this, ret.Item1);
 
+                        if (retValue.ContainsKey(ret.Item1) == false)
                         retValue.Add(ret.Item1, ret.Item2);
                     }
 
@@ -290,7 +391,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 var Document = document as Document;
 
-                if (model.GetTitle().ToLower() == Document.FileName.ToLower())
+                if (model.GetTitle2().ToLower() == Document.FileName.ToLower())
                 {
                     if (Document.IsLoaded == false)
                     {

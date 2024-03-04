@@ -65,6 +65,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             return tempFileName;
         }
 
+      
         public bool CleanFiles()
         {
             foreach (string file in this.files)

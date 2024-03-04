@@ -65,6 +65,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BillOfMaterials\BOM.cs" />
+    <Compile Include="BillOfMaterials\BOMSettings.cs" />
     <Compile Include="CustomProperties\ChangeType.cs" />
     <Compile Include="CustomProperties\CustomPropertyChangedEventArgs.cs" />
     <Compile Include="CustomProperties\ICustomPropertyManager.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Globals.cs" />
     <Compile Include="ISOLIDWORKSApplication.cs" />
     <Compile Include="ISOLIDWORKSObject.cs" />
+    <Compile Include="Models\Stuple.cs" />
     <Compile Include="SaveEventArgs.cs" />
     <Compile Include="SOLIDWORKSObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

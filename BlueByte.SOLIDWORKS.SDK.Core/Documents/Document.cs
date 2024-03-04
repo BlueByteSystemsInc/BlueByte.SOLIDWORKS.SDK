@@ -12,6 +12,51 @@ using System.Linq;
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
 
+    public static class ModelDoc2Helper
+    {
+
+        /// <summary>
+        /// Gets the title2.
+        /// </summary>
+        /// <param name="modelDoc2">The model doc2.</param>
+        /// <returns></returns>
+        public static string GetTitle2(this ModelDoc2 modelDoc2)
+        {
+
+            var fileName = modelDoc2.GetTitle();
+            var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fileName);
+
+            var type = (swDocumentTypes_e)modelDoc2.GetType();
+
+            switch (type)
+            {
+                case swDocumentTypes_e.swDocNONE:
+                    return fileName;
+                case swDocumentTypes_e.swDocPART:
+                    return $"{fileNameWithoutExtension}.sldprt";
+                case swDocumentTypes_e.swDocASSEMBLY:
+                    return $"{fileNameWithoutExtension}.sldasm";
+                case swDocumentTypes_e.swDocDRAWING:
+                    return $"{fileNameWithoutExtension}.slddrw";
+                case swDocumentTypes_e.swDocSDM:
+                    return fileNameWithoutExtension;
+                case swDocumentTypes_e.swDocLAYOUT:
+                    return fileNameWithoutExtension;
+                case swDocumentTypes_e.swDocIMPORTED_PART:
+                    return $"{fileNameWithoutExtension}.sldprt";
+                case swDocumentTypes_e.swDocIMPORTED_ASSEMBLY:
+                    return $"{fileNameWithoutExtension}.sldasm";
+                default:
+                    break;
+            }
+
+
+            return fileName;
+
+        }
+    }
+
+
     internal class Document : SOLIDWORKSObject, IDocument
     {
 
@@ -48,9 +93,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
             if (this.UnSafeObject != null && this.IsLoaded)
             {
-                this.IsVisible = (this.UnSafeObject as ModelDoc2).Visible;
-                this.PathName = (this.UnSafeObject as ModelDoc2).GetPathName();
-                this.FileName = System.IO.Path.GetFileName((this.UnSafeObject as ModelDoc2).GetPathName());
+                var obj = this.UnSafeObject as ModelDoc2;
+
+                if (obj != null)
+                    this.IsVisible = obj.Visible;
+                this.PathName = obj.GetPathName();
+                this.FileName = System.IO.Path.GetFileName(obj.GetPathName());
 
             }
         }
@@ -109,7 +157,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 base.UnSafeObject = model;
                 DocumentType = (swDocumentTypes_e)model.GetType();
-                FileName = model.GetTitle();
+                FileName = model.GetTitle2();
                 PathName = model.GetPathName();
                 switch (DocumentType)
                 {
@@ -468,10 +516,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public bool Equals(string filename)
         {
             var f = this.FileName;
-            if (System.IO.Path.HasExtension(f))
-                return filename.Equals(f);
-
-            return System.IO.Path.GetFileNameWithoutExtension(filename).Equals(System.IO.Path.GetFileNameWithoutExtension(f));
+            return System.IO.Path.GetFileName(filename).Equals(System.IO.Path.GetFileName(f), StringComparison.OrdinalIgnoreCase);
         }
 
         public virtual void DettachEventHandlers()

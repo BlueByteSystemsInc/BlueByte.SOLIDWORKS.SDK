@@ -15,7 +15,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// </summary>
         /// <param name="menuText">The menu text.</param>
         /// <param name="docTypes">The document types.</param>
-        /// <param name="isItem">True if the item is a menu item, false, if it is a menu item</param>
         /// <param name="callback">The callback.</param>
         /// <param name="customNames">Custom names for selection types. Semi-colon separated list of the names of the custom feature types; this argument is applicable only if SelectType is a custom feature type (like swSelATTRIBUTES); in the case of swSelATTRIBUTES, set this field to the name of the attribute definition</param>
         public PopMenuItemAttribute(string menuText, swDocumentTypes_e docTypes, string callback = "", string customNames = null)
@@ -28,9 +27,31 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
            
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PopMenuItemAttribute" /> class.
+        /// </summary>
+        /// <param name="menuText">The menu text.</param>
+        /// <param name="docTypes">The document types.</param>
+        /// <param name="callback">The callback.</param>
+        /// <param name="menuEnable">Menu enable method name</param>
+        /// <param name="type">Entity to select</param>
+        /// <param name="customNames">customNames</param>
+        public PopMenuItemAttribute(string menuText, swDocumentTypes_e docTypes, swSelectType_e selectionType, string callback = "", string hint = "", string menuEnable = "", string customNames = "")
+        {
+            this.Text = menuText;
+            this.DocumentType = docTypes;
+            this.Callback = callback;
+            this.CustomNames = customNames;
+            this.MenuEnableState = menuEnable;
+            this.SelectionType = selectionType;
+            this.Hint = hint;
+
+
+        }
+
         #region properties 
 
- 
+
 
         /// <summary>
         /// Document type to which to add the menu item as defined by swDocumentTypes_e.
