@@ -7,7 +7,9 @@ using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace BlueByte.TestAddIn
@@ -45,22 +47,14 @@ namespace BlueByte.TestAddIn
             base.OnConnectToSOLIDWORKS(swApp);
 
             this.DocumentManager.ActiveDocumentChanged += DocumentManager_ActiveDocumentChanged;
-
-
-
-
-        }
-
-        protected override void RegisterDefaultTypes()
-        {
-
+          
 
 
         }
-        public override void CreateDefaultTypesInstances()
-        {
 
-        }
+        
+
+      
 
         
 
@@ -87,9 +81,15 @@ namespace BlueByte.TestAddIn
 
             var doc = this.DocumentManager.ActiveDocument;
 
-            var extensions = FileExtension_e.x_t | FileExtension_e.stp | FileExtension_e.x_t | FileExtension_e.slddrw | FileExtension_e.sldprt | FileExtension_e.sldasm| FileExtension_e.Default |  FileExtension_e.igs | FileExtension_e.pdf;
+            var stBuilder = new StringBuilder();
 
-            doc.Save(extensions);
+            var docs = DocumentManager.GetDocuments();
+
+            stBuilder.AppendLine(docs.Length.ToString());
+
+            docs.ToList().ForEach(x => stBuilder.AppendLine(x.FileName));
+
+            this.Application.SendInformationMessage(stBuilder.ToString());
         
         }
 

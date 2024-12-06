@@ -339,6 +339,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
                 }
 
                 Container.RegisterInstance<ISOLIDWORKSApplication>(this.Application);
+
                 RegisterDefaultTypes();
 
             }
@@ -462,7 +463,34 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
             catch (Exception e)
             {
 
-                this.Application.As<SldWorks>().SendMsgToUser($"{e.Message} {e.StackTrace}");
+                var error = $"{e.Message} {e.StackTrace}";
+                var ret = MessageBox.Show(error);
+
+                switch (ret)
+                {
+                    case DialogResult.None:
+                        break;
+                    case DialogResult.OK:
+                        Clipboard.SetText(error);
+                        break;
+                    case DialogResult.Cancel:
+                        break;
+                    case DialogResult.Abort:
+                        break;
+                    case DialogResult.Retry:
+                        break;
+                    case DialogResult.Ignore:
+                        break;
+                    case DialogResult.Yes:
+                        break;
+                    case DialogResult.No:
+                        break;
+                    default:
+                        break;
+                }
+               
+
+               
             }
 
 

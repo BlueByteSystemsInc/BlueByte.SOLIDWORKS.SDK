@@ -160,7 +160,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
         /// <summary>
         /// Initializes this instance.
         /// </summary>
-        void Initialize();
+        bool Initialize();
     }
 }
 

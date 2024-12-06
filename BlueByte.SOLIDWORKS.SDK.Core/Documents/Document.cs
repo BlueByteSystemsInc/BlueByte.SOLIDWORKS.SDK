@@ -78,7 +78,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyAdded;
         public event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
         public event EventHandler GotLoaded;
-
+        public event EventHandler Rebuilt;
         #endregion
 
         /// <summary>
@@ -190,6 +190,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         }
 
 
+        public override string ToString()
+        {
+            if (string.IsNullOrWhiteSpace(this.FileName))
+                return this.FileName;
+
+            return base.ToString();
+        }
+
         public virtual void AttachEventHandlers()
         {
             switch (DocumentType)
@@ -204,6 +212,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             partDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
                             partDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
                             partDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
+
+                            partDoc.FeatureManagerTreeRebuildNotify += document_FeatureManagerTreeRebuildNotify;
+
                         }
                     }
                     break;
@@ -218,7 +229,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             assemblyDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify;
                             assemblyDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify;
                             assemblyDoc.FileReloadNotify += document_FileReloadNotify;
-                            assemblyDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
+                            assemblyDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify;
+                            assemblyDoc.FeatureManagerTreeRebuildNotify += document_FeatureManagerTreeRebuildNotify;
                         }
                     }
                     break;
@@ -229,9 +241,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             drawingDoc.DestroyNotify2 += document_DestroyNotify2;
                             drawingDoc.FileSaveAsNotify2 += document_FileSaveAsNotify2;
                             drawingDoc.AddCustomPropertyNotify += document_AddCustomPropertyNotify;
-                            drawingDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify; ;
-                            drawingDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify; ;
-                            drawingDoc.FileReloadNotify += document_FileReloadNotify; ;
+                            drawingDoc.DeleteCustomPropertyNotify += document_DeleteCustomPropertyNotify; 
+                            drawingDoc.ChangeCustomPropertyNotify += document_ChangeCustomPropertyNotify; 
+                            drawingDoc.FileReloadNotify += document_FileReloadNotify;
+                            drawingDoc.FeatureManagerTreeRebuildNotify += document_FeatureManagerTreeRebuildNotify;
                         }
                     }
                     break;
@@ -239,6 +252,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 default:
                     break;
             }
+        }
+
+        private int document_FeatureManagerTreeRebuildNotify()
+        {
+            if (this.Rebuilt != null)
+                this.Rebuilt.Invoke(this, EventArgs.Empty);
+
+
+            return 0;
         }
 
         /// <summary>
@@ -533,7 +555,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             partDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify;
                             partDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
                             partDoc.DestroyNotify2 -= document_DestroyNotify2;
-                            partDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
+                            partDoc.ActiveConfigChangePostNotify -= document_ActiveConfigChangePostNotify;
+                            partDoc.FeatureManagerTreeRebuildNotify-= document_FeatureManagerTreeRebuildNotify;
+                             
                         }
                     }
                     break;
@@ -549,7 +573,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             assemblyDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify;
                             assemblyDoc.DestroyNotify2 -= document_DestroyNotify2;
                             assemblyDoc.FileReloadNotify -= document_FileReloadNotify;
-                            assemblyDoc.ActiveConfigChangePostNotify += document_ActiveConfigChangePostNotify; ;
+                            assemblyDoc.ActiveConfigChangePostNotify -= document_ActiveConfigChangePostNotify;
+                            assemblyDoc.FeatureManagerTreeRebuildNotify -= document_FeatureManagerTreeRebuildNotify;
                         }
                     }
                     break;
@@ -560,9 +585,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                             drawingDoc.FileSaveAsNotify2 -= document_FileSaveAsNotify2;
                             drawingDoc.DestroyNotify2 -= document_DestroyNotify2;
                             drawingDoc.AddCustomPropertyNotify -= document_AddCustomPropertyNotify;
-                            drawingDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify; ;
-                            drawingDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify; ;
+                            drawingDoc.DeleteCustomPropertyNotify -= document_DeleteCustomPropertyNotify; 
+                            drawingDoc.ChangeCustomPropertyNotify -= document_ChangeCustomPropertyNotify; 
                             drawingDoc.FileReloadNotify -= document_FileReloadNotify;
+                            drawingDoc.FeatureManagerTreeRebuildNotify -= document_FeatureManagerTreeRebuildNotify;
                         }
                     }
                     break;

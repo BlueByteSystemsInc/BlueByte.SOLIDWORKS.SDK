@@ -49,9 +49,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Initializes the assembly hierarchy.
         /// </summary>
         /// <param name="referencedConfiguration">The referenced configuration.</param>
-        public void Initialize(string referencedConfiguration)
+        public bool Initialize(string referencedConfiguration)
         {
-
+ 
             var configuration = (UnSafeObject as ModelDoc2).GetConfigurationByName(referencedConfiguration) as Configuration;
 
             var swRootComponent = configuration.GetRootComponent() as Component2;
@@ -60,9 +60,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
             var components = new List<Components.IComponent>();
 
-            var swComponents = assemblyDoc.GetComponents(true) as object[];
-
-
+            var swComponents = (UnSafeObject as AssemblyDoc).GetComponents(true) as object[];
 
             if (swComponents != null)
             {
@@ -78,6 +76,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 
                 RootComponent.Children = components.ToArray();                
             }
+            
 
 
             // recursively init components
@@ -92,7 +91,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                     foreach (var c in cs)
                     {
                         c.Parent = assembly.RootComponent;
-                        c.Initialize();
+                        var ret = c.Initialize();
                         traverse(c);
                     }
                 }
@@ -100,6 +99,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             };
 
             traverse(this.RootComponent);
+
+            return true;
         }
 
 
@@ -170,10 +171,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
                 if (bomSettings.IgnoreEnvelopeComponents && x.IsEnvelope)
                     return;
+                
+                if (x.SuppressionState == swComponentSuppressionState_e.swComponentSuppressed)
+                    return;
 
                 var f = System.IO.Path.GetFileName(x.PathName);
 
-                var i = l.FirstOrDefault(j => j.Item1.EndsWith(f, StringComparison.OrdinalIgnoreCase));
+                 
+
+                var i = l.FirstOrDefault(j => j.Item1.Equals(f, StringComparison.OrdinalIgnoreCase));
 
                 if (i == null)
                 {

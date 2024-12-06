@@ -66,6 +66,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </summary>
         event EventHandler<SaveEventArgs> DocumentAboutToBeSavedAs;
 
+
+
+        /// <summary>
+        /// Occurs when [active document is rebuilt].
+        /// </summary>
+        event EventHandler<IDocument> ActiveDocumentRebuilt;
+
         /// <summary>
         /// Adds an unloaded document. i.e. document is a suppressed reference of another document. For example: suppressed component in an assembly.
         /// </summary>

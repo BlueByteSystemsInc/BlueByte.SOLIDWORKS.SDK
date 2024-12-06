@@ -37,6 +37,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public event EventHandler<IDocument> ActiveDocumentChanged;
 
+        public event EventHandler<IDocument> ActiveDocumentRebuilt;
+
         #endregion
 
         #region Public Properties
@@ -47,7 +49,27 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         public IDocument ActiveDocument
         {
             get { return activeDoc; }
-            set { activeDoc = value; NotifyPropertyChanged(nameof(ActiveDocument)); }
+            set { 
+                
+                if (activeDoc != null)
+                    activeDoc.Rebuilt -= ActiveDoc_Rebuilt;
+
+                activeDoc = value;
+
+               
+
+                NotifyPropertyChanged(nameof(ActiveDocument));
+
+                if (value != null)
+                value.Rebuilt += ActiveDoc_Rebuilt;
+            }
+        }
+
+        private void ActiveDoc_Rebuilt(object sender, EventArgs e)
+        {
+            if (this.ActiveDocument != null && this.ActiveDocumentRebuilt != null)
+                this.ActiveDocumentRebuilt.Invoke(this, this.ActiveDocument);
+
         }
 
         ObservableCollection<IDocument> Documents { get; set; } = new ObservableCollection<IDocument>();
@@ -256,7 +278,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
             _document.DettachEventHandlers();
             _document.AttachEventHandlers();
-
+     
             _document.GotClosed -= document_GotClosed;
             _document.GotClosed += document_GotClosed;
             Documents.Add(_document);

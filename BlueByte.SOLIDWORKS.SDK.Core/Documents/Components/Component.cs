@@ -65,33 +65,50 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
 
         public bool IsEnvelope { get;   set; }
 
-        public void Initialize()
+        public bool Initialize()
         {
             if (this.Document == null)
-                return;
+                return false;
 
             if (this.Document.DocumentType != swDocumentTypes_e.swDocASSEMBLY)
-                return;
+                return false;
 
 
             if (this.SuppressionState != swComponentSuppressionState_e.swComponentFullyResolved && this.SuppressionState != swComponentSuppressionState_e.swComponentResolved)
-                return;
-
-            var assembly = this.Document as IAssembly;
-
-            if (assembly == null)
-                return;
-            
-            if (assembly.RootComponent == null)
-                assembly.Initialize(ReferencedConfiguration);
+                return false;
 
 
-            this.Children = assembly.RootComponent.Children;
+            var childrenComponents = (UnsafeObject as SolidWorks.Interop.sldworks.Component2).GetChildren() as Object[];
 
+            foreach (var child in childrenComponents)
+            {
+                var swChild = child as SolidWorks.Interop.sldworks.Component2;
+
+                var component = swChild.ToIComponent();
+
+                component.Parent = this;
+
+                if (Children == null)
+                    Children = new IComponent[] { component };
+                else
+                {
+                    var t = new System.Collections.Generic.List<IComponent>();
+                    t.AddRange(this.Children);
+                    t.Add(component);
+                    this.Children = t.ToArray();
+                }
+              
+            }
+
+           
             if (this.Children != null)
-            foreach (var child in this.Children)
-                child.Initialize();
+             foreach (var child in this.Children)
+             {
+                   var childRet = child.Initialize();
+             }
 
+
+            return true; 
 
         }
 

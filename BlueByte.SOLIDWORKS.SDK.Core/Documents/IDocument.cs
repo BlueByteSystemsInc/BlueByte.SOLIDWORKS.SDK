@@ -30,6 +30,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </summary>
         event EventHandler<CustomPropertyChangedEventArgs> CustomPropertyDeleted;
 
+
+        /// <summary>
+        /// Occurs when the document feature tree is rebuilt.
+        /// </summary>
+        event EventHandler Rebuilt;
+
+
         #endregion
 
 

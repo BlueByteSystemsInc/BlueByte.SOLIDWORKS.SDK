@@ -26,7 +26,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Initializes the assembly hierarchy.
         /// </summary>
         /// <param name="referencedConfiguration">The referenced configuration.</param>
-        void Initialize(string referencedConfiguration);
+        bool Initialize(string referencedConfiguration);
 
 
         /// <summary>

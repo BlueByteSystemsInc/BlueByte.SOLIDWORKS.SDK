@@ -46,7 +46,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         public void SendInformationMessage(string message)
         {
             var swApp = this.UnSafeObject as SldWorks;
-            swApp.SendMsgToUser2(message, (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
+            swApp.SendMsgToUser2(message, (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }
         public string GetLastSaveErrorMessage()
         {
