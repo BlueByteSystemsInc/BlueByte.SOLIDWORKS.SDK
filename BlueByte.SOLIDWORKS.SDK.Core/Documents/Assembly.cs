@@ -9,6 +9,16 @@ using System.Linq;
 
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
+
+    public enum GroupBy
+    {
+        None,
+        FileName,
+        PartNumber,
+        ConfigurationName,
+        CustomProperty
+    }
+
     [Obsolete("THIS CLASS IS WIP")]
     internal class Assembly : Document, IAssembly
     {
@@ -150,7 +160,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
     
 
-        public List<Stuple<string, int>> GetQuantitiedReferences(BOMSettings bomSettings)
+        public List<Stuple<string, int>> GetFlatBOM(BOMSettings bomSettings)
         {
          
 
@@ -202,6 +212,120 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             return l;
         }
 
+
+        public List<Stuple<string, double>> GetFlatBOM(BOMSettings bomSettings, GroupBy groupby = GroupBy.FileName, string propertyName = "")
+        {
+
+
+            var l = new List<Stuple<string, double>>();
+
+            var rootComponent = this.RootComponent;
+
+            Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
+
+            traverse = (Components.IComponent x) =>
+            {
+
+                if (bomSettings.IgnoreBOMExcludedComponents && x.ExcludedFromBOM)
+                    return;
+
+                if (bomSettings.IgnoreVirtualComponents && x.IsVirtual)
+                    return;
+
+                if (bomSettings.IgnoreEnvelopeComponents && x.IsEnvelope)
+                    return;
+
+                if (x.SuppressionState == swComponentSuppressionState_e.swComponentSuppressed)
+                    return;
+
+                var identifierX = System.IO.Path.GetFileName(x.PathName);
+                switch (groupby)
+                {
+                    case GroupBy.None:
+                        break;
+                    case GroupBy.FileName:
+                        identifierX = System.IO.Path.GetFileName(x.PathName);
+                        break;
+                    case GroupBy.PartNumber:
+                        {
+                           identifierX = string.Empty;
+                            if (x.Document.CustomPropertyManager.TryGet(x.Document, "PartNumber", x.ReferencedConfiguration, out string partNumber))
+                                identifierX = partNumber;
+                            if (string.IsNullOrWhiteSpace(identifierX))
+                                identifierX = string.Empty;
+                        }
+                        break;
+                    case GroupBy.ConfigurationName:
+                        identifierX = x.ReferencedConfiguration;
+                        break;
+                    case GroupBy.CustomProperty:
+                        identifierX = string.Empty;
+                        if (x.Document.CustomPropertyManager.TryGet(x.Document, propertyName, x.ReferencedConfiguration, out string propertyValue))
+                            identifierX = propertyValue;
+                        if (string.IsNullOrWhiteSpace(identifierX))
+                            identifierX = string.Empty;
+                        break;
+                    default:
+                        break;
+                }
+                
+
+
+
+                var i = l.FirstOrDefault(j => j.Item1.Equals(identifierX, StringComparison.OrdinalIgnoreCase));
+
+                if (i == null)
+                {
+                    if (string.IsNullOrWhiteSpace(identifierX) == false)
+                    {
+                        var quantity = 1.0;
+
+                        var ret = x.Document.CustomPropertyManager.TryGet(x.Document, "UNIT_OF_MEASURE", x.ReferencedConfiguration, out string bomQuantityPropertyName);
+
+                        if (ret)
+                            l.Add(new Stuple<string, double>(identifierX, quantity));
+                        else
+                        {
+                            ret = x.Document.CustomPropertyManager.TryGet(x.Document, bomQuantityPropertyName, x.ReferencedConfiguration, out string quantityStr);
+
+                            ret = double.TryParse(quantityStr, out quantity);
+                        }
+
+                        l.Add(new Stuple<string, double>(identifierX, quantity));
+
+                    }
+
+                }
+                else
+                {
+                    double quantity = 1;
+                    var ret = x.Document.CustomPropertyManager.TryGet(x.Document, "UNIT_OF_MEASURE", x.ReferencedConfiguration, out string bomQuantityPropertyName);
+
+                    if (ret)
+                        l.Add(new Stuple<string, double>(identifierX, quantity));
+                    else
+                    {
+                        ret = x.Document.CustomPropertyManager.TryGet(x.Document, bomQuantityPropertyName, x.ReferencedConfiguration, out string quantityStr);
+
+                        ret = double.TryParse(quantityStr, out quantity);
+                    }
+
+                    l.Add(new Stuple<string, double>(identifierX, quantity));
+
+                    i.Item2 = i.Item2 + quantity;
+                }
+
+                if (x.Children != null)
+                    foreach (var component in x.Children)
+                        traverse(component);
+
+            };
+
+
+            traverse(rootComponent);
+
+            return l;
+        }
 
 
         private int AssemblyDoc_ComponentConfigurationChangeNotify(string componentName, string oldConfigurationName, string newConfigurationName)

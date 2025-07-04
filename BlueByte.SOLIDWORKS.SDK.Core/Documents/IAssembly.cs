@@ -39,6 +39,6 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </summary>
         /// <param name="bomSettings">The bom settings.</param>
         /// <returns></returns>
-        List<Stuple<string, int>> GetQuantitiedReferences(BOMSettings bomSettings);
+        List<Stuple<string, int>> GetFlatBOM(BOMSettings bomSettings);
     }
 }

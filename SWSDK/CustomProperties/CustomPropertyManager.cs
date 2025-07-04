@@ -97,6 +97,30 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         }
 
 
+        public bool TryGet(IDocument doc, string propertyName, string configurationName, out string value)
+        {
+            value = null;
+            var modeldoc = doc.UnSafeObject as ModelDoc2;
+
+
+            if (modeldoc == null)
+                throw new Exception("Could get the api model object to set the property.");
+            try
+            {
+                var ret = modeldoc.Extension.CustomPropertyManager[configurationName].Get(propertyName);
+
+                value = ret;
+            }
+            catch (Exception e)
+            {
+
+                return false;
+            }
+
+
+            return true;
+        }
+
         public string[] GetNames(IDocument doc, string configurationName = "")
         {
             var modeldoc = doc.UnSafeObject as ModelDoc2;

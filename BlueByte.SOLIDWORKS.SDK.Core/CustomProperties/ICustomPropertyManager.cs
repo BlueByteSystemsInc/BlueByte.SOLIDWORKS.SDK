@@ -34,7 +34,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         /// <returns>Array of property names</returns>
         string[] GetNames(IDocument doc, string configurationName = "");
 
-
+        /// <summary>
+        /// Gets the value of a property for a specified configuration name
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="configurationName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        bool TryGet(IDocument doc, string propertyName, string configurationName, out string value);
 
         /// <summary>
         /// Sets the specified custom property in the specified document.

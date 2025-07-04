@@ -61,7 +61,7 @@ namespace TestConsole
                 bomSettings.IgnoreVirtualComponents = true;
                 bomSettings.IgnoreEnvelopeComponents = true;
 
-                var ret = assembly.GetQuantitiedReferences(bomSettings);
+                var ret = assembly.GetFlatBOM(bomSettings);
 
                 foreach (var item in ret)
                 {
