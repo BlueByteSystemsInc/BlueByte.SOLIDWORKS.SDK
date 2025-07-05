@@ -40,5 +40,17 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <param name="bomSettings">The bom settings.</param>
         /// <returns></returns>
         List<Stuple<string, int>> GetFlatBOM(BOMSettings bomSettings);
+
+
+        /// <summary>
+        /// Returns the flat BOM and allows grouping by a property name.
+        /// </summary>
+        /// <param name="bomSettings"></param>
+        /// <param name="groupby"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        List<Stuple<string, double>> GetFlatBOM(BOMSettings bomSettings, GroupBy groupby = GroupBy.FileName, string propertyName = "");
+
+
     }
 }
