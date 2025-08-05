@@ -61,8 +61,17 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// <param name="referencedConfiguration">The referenced configuration.</param>
         public bool Initialize(string referencedConfiguration)
         {
- 
-            var configuration = (UnSafeObject as ModelDoc2).GetConfigurationByName(referencedConfiguration) as Configuration;
+
+            var modelDoc = UnSafeObject as ModelDoc2;
+
+            if (modelDoc == null)
+                throw new InvalidOperationException($"{UnSafeObject} is not set or is not a valid assembly document.");
+            
+
+            var configuration = modelDoc.GetConfigurationByName(referencedConfiguration) as Configuration;
+
+            if (configuration == null)
+                throw new InvalidOperationException($"Configuration '{referencedConfiguration}' not found in document '{modelDoc.GetTitle2()}'.");
 
             var swRootComponent = configuration.GetRootComponent() as Component2;
 
@@ -70,7 +79,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
             var components = new List<Components.IComponent>();
 
-            var swComponents = (UnSafeObject as AssemblyDoc).GetComponents(true) as object[];
+            var swComponents = (modelDoc as AssemblyDoc).GetComponents(true) as object[];
 
             if (swComponents != null)
             {
@@ -127,6 +136,28 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 if (doAction != null)
                     doAction.Invoke(component);
 
+                var children = component.Children;
+
+                foreach (var child in children)
+                    traverse(child);
+            };
+
+
+            traverse(RootComponent);
+        }
+
+        public void TraverseAndContinue(Func<Components.IComponent, bool> continueAction)
+        {
+            Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
+
+            traverse = (Components.IComponent component) => {
+
+                if (continueAction != null)
+                {
+                    var ret = continueAction.Invoke(component);
+                    if (ret == false)
+                        return; // stop traversing this branch
+                }
                 var children = component.Children;
 
                 foreach (var child in children)

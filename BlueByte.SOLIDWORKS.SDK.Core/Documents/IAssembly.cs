@@ -34,6 +34,16 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// </summary>
         /// <param name="doAction">The do action.</param>
         void TraverseAndDo(Action<Components.IComponent> doAction);
+
+
+        /// <summary>
+        /// Traverses the assembly and continues until the action returns false.
+        /// </summary>
+        /// <param name="doAction">The do action.</param>
+        void TraverseAndContinue(Func<Components.IComponent, bool> continueAction);
+
+
+
         /// <summary>
         /// Gets the quantitied references.
         /// </summary>
