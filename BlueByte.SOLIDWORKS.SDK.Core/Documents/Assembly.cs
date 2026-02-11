@@ -19,6 +19,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         CustomProperty
     }
 
+    
+
     [Obsolete("THIS CLASS IS WIP")]
     internal class Assembly : Document, IAssembly
     {
@@ -85,6 +87,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             {
                 foreach (var swComponent in swComponents)
                 {
+                    if (swComponent == null)
+                        continue;
+
                     var component = swComponent.ToIComponent();
 
                     component.Parent = RootComponent;
@@ -476,6 +481,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 case swNotifyEntityType_e.swNotifyComponent:
                     {
                         var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
+
+                        if (swComponent == null)
+                            return 0;
+
                         var component = swComponent.ToIComponent();
                         RootComponent.AddChild(component);
                         component.Parent = RootComponent;
@@ -514,6 +523,10 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 case swNotifyEntityType_e.swNotifyComponent:
                     {
                         var swComponent = this.assemblyDoc.GetComponentByName(itemName) as Component2;
+
+                        if (swComponent == null)
+                            return 0;
+
                         var component = swComponent.ToIComponent();
                         RootComponent.RemoveChild(component);
                         ComponentRemoved?.Invoke(this, ComponentRemovedEventArgs.New(component));

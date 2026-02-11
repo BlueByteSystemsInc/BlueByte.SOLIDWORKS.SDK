@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BlueByte.SOLIDWORKS.SDK.Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("BlueByte.SOLIDWORKS.SDK.Core")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("BLUE BYTE SYSTEMS INC.")]
 [assembly: AssemblyProduct("BlueByte.SOLIDWORKS.SDK.Core")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("52.0.0.0")]
-[assembly: AssemblyFileVersion("52.0.0.0")]
+[assembly: AssemblyVersion("54.0.0.0")]
+[assembly: AssemblyFileVersion("54.0.0.0")]

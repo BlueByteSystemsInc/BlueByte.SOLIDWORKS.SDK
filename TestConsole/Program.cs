@@ -36,7 +36,7 @@ namespace TestConsole
 
                 string[] errors;
 
-                swApp.OpenDocument(@"C:\SOLIDWORKSPDM\Bluebyte\2023\Support_Frame_End_&.SLDASM", out errors, out warnings);
+                swApp.OpenDocument(@"C:\Users\jlili\Downloads\Bench Grinder\Bench Grinder.SLDASM", out errors, out warnings);
 
 
                 var addin = new BlueByte.TestAddIn.AddIn();
@@ -46,7 +46,7 @@ namespace TestConsole
 
                 var docs = addin.DocumentManager.GetDocuments();
 
-                var doc = docs.FirstOrDefault(x=> x.FileName.EndsWith("Support_Frame_End_&.SLDASM", StringComparison.OrdinalIgnoreCase));
+                var doc = docs.FirstOrDefault(x=> x.FileName.EndsWith("Bench Grinder.SLDASM", StringComparison.OrdinalIgnoreCase));
 
                 var assembly = doc as IAssembly;
 

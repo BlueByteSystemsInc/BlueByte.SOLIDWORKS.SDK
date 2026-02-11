@@ -12,6 +12,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
 
             var swComponent = component as Component2;
 
+
             return swComponent.ToIComponent();
 
         }

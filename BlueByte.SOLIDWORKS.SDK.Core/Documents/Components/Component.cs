@@ -74,17 +74,23 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
                 return false;
 
 
-            if (this.SuppressionState != swComponentSuppressionState_e.swComponentFullyResolved && this.SuppressionState != swComponentSuppressionState_e.swComponentResolved)
+            if (this.SuppressionState  == swComponentSuppressionState_e.swComponentSuppressed)
                 return false;
 
 
             var childrenComponents = (UnsafeObject as SolidWorks.Interop.sldworks.Component2).GetChildren() as Object[];
 
+
             foreach (var child in childrenComponents)
             {
                 var swChild = child as SolidWorks.Interop.sldworks.Component2;
 
+                if (swChild == null)
+                    continue;
+
                 var component = swChild.ToIComponent();
+
+
 
                 component.Parent = this;
 
