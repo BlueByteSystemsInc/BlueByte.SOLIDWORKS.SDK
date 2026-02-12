@@ -24,7 +24,7 @@ namespace TestConsole
                 var solidworksManager = new BlueByte.SOLIDWORKS.Extensions.SOLIDWORKSInstanceManager();
 
 
-                var swApp = solidworksManager.GetNewInstance();
+                var swApp = solidworksManager.GetNewInstance("/r", SOLIDWORKSInstanceManager.Year_e.Year2023);
 
 
                 swApp.Visible = true;
@@ -36,7 +36,7 @@ namespace TestConsole
 
                 string[] errors;
 
-                swApp.OpenDocument(@"C:\Users\jlili\Downloads\Bench Grinder\Bench Grinder.SLDASM", out errors, out warnings);
+                swApp.OpenDocument(@"D:\Assemblageddon\conveyor\conveyor.SLDASM", out errors, out warnings);
 
 
                 var addin = new BlueByte.TestAddIn.AddIn();
@@ -46,7 +46,7 @@ namespace TestConsole
 
                 var docs = addin.DocumentManager.GetDocuments();
 
-                var doc = docs.FirstOrDefault(x=> x.FileName.EndsWith("Bench Grinder.SLDASM", StringComparison.OrdinalIgnoreCase));
+                var doc = docs.FirstOrDefault(x=> x.FileName.EndsWith("conveyor.SLDASM", StringComparison.OrdinalIgnoreCase));
 
                 var assembly = doc as IAssembly;
 

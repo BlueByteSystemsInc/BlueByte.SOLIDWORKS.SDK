@@ -78,7 +78,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
                 return false;
 
 
-            var childrenComponents = (UnsafeObject as SolidWorks.Interop.sldworks.Component2).GetChildren() as Object[];
+            var childrenComponents = (UnsafeObject as SolidWorks.Interop.sldworks.Component2).GetChildren() as object[];
 
 
             foreach (var child in childrenComponents)

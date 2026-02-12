@@ -98,7 +98,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         components.Add(component);
                 }
                 
-                RootComponent.Children = components.ToArray();                
+                RootComponent.Children = components.ToArray();
+                
             }
             
 
@@ -118,6 +119,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         var ret = c.Initialize();
                         traverse(c);
                     }
+
+                    if (assembly != null && assembly.RootComponent != null)
+                    component.Children = assembly.RootComponent.Children;
                 }
                 
             };
