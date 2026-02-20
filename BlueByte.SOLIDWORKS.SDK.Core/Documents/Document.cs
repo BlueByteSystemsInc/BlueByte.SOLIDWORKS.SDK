@@ -435,7 +435,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                         filePath = System.IO.Path.ChangeExtension(filePath, ".iges");
                         break;
                     case FileExtension_e.igs:
-                        filePath = System.IO.Path.ChangeExtension(filePath, ".igs"); 
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".igs");
+                        break;
+                    case FileExtension_e._3mf:
+                        filePath = System.IO.Path.ChangeExtension(filePath, ".3mf");
+
                         break;
                     case FileExtension_e.dxf:
                         filePath = System.IO.Path.ChangeExtension(filePath, ".dxf");
