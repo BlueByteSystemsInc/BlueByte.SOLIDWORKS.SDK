@@ -119,16 +119,6 @@ All SOLIDWORKS add-ins using this SDK inherit from `AddInBase`, which provides:
   - For logging diagnostics and errors.
 
 ---
-
-**For practical code see:**
-- [AddInBase.cs](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK/Core/AddInBase.cs)
-- [Identity.cs](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK/Core/Identity.cs)
-- [NameAttribute.cs](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK/Attributes/Name.cs)
-- [IconAttribute.cs](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK/Attributes/Icon.cs)
-- [MenuItemAttribute Usage Example](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK.TestAddIn/AddIn.cs)
-- [DocumentManager overview](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/BlueByte.SOLIDWORKS.SDK.Core/Globals.cs)
-
----
 ## Complete Explanation of TestAddIn Example
 
 ### What is TestAddIn?
@@ -211,13 +201,8 @@ TestAddIn illustrates all the foundational SDK features.
 **Best Practice:**  
 Start with TestAddIn, build and register, then iteratively add your add-in features, event handlers, and custom menu commands.
 
----
-
-**See Example Source:**
-- [`AddIn.cs`](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK.TestAddIn/AddIn.cs)
-- [`SWSDK.TestAddIn.csproj`](https://github.com/BlueByteSystemsInc/BlueByte.SOLIDWORKS.SDK/blob/main/SWSDK.TestAddIn/SWSDK.TestAddIn.csproj)
 
 ---
-TestAddIn is your gateway to powerful, maintainable SOLIDWORKS add-ins with Blue Byte Systems SDK.
+TestAddIn is your gateway example for SOLIDWORKS add-ins with Blue Byte Systems SDK.
 
 
