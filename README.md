@@ -1,5 +1,21 @@
 ## SDK Infrastructure: Base Classes, Attributes, and Core Concepts
 
+
+### VS Templates 
+
+>[!Note]
+>Please make sure to update the nuget packages. The templates are always behind the nuget packages.
+```bash
+https://marketplace.visualstudio.com/items?itemName=BlueByteSystemsInc.SWSDK32
+```
+
+## ▶️ YouTube AddIn Example
+
+[![Example Tutorial](https://img.youtube.com/vi/D0HywJrycBQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=D0HywJrycBQ)
+
+
+
+
 ### AddInBase (Base Class of Your Addin)
 All SOLIDWORKS add-ins using this SDK inherit from `AddInBase`, which provides:
 
