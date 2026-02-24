@@ -77,8 +77,9 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         /// Adds an unloaded document. i.e. document is a suppressed reference of another document. For example: suppressed component in an assembly.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
+        /// <param name="isRoot">Is Root</param>
         /// <returns></returns>
-        IDocument AddUnloadedDocument(string fileName);
+        IDocument AddUnloadedDocument(string fileName, bool isRoot);
 
         /// <summary>
         /// Attaches the event handlers.

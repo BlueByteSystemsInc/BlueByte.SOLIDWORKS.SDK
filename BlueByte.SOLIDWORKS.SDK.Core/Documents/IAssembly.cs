@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 {
 
-    [ObsoleteAttribute("THIS TYPE IS WIP")]
+   
     /// <summary>
     /// Represents a wrapper over <see cref="SolidWorks.Interop.sldworks.AssemblyDoc"/>. Contains methods and events specific to component management.
     /// </summary>

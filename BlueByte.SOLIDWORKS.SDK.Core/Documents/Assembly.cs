@@ -19,9 +19,11 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         CustomProperty
     }
 
-    
 
-    [Obsolete("THIS CLASS IS WIP")]
+
+    /// <summary>
+    /// Represents a SOLIDWORKS assembly document. Provides methods and events specific to component management.
+    /// </summary>
     internal class Assembly : Document, IAssembly
     {
         #region properties 

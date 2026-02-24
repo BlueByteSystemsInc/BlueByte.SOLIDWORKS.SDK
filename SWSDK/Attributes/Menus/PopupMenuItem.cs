@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.swconst;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.Enums;
+using SolidWorks.Interop.swconst;
 using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
@@ -17,7 +18,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// <param name="docTypes">The document types.</param>
         /// <param name="callback">The callback.</param>
         /// <param name="customNames">Custom names for selection types. Semi-colon separated list of the names of the custom feature types; this argument is applicable only if SelectType is a custom feature type (like swSelATTRIBUTES); in the case of swSelATTRIBUTES, set this field to the name of the attribute definition</param>
-        public PopMenuItemAttribute(string menuText, swDocumentTypes_e docTypes, string callback = "", string customNames = null)
+        public PopMenuItemAttribute(string menuText, DocumentTypes_e docTypes, string callback = "", string customNames = null)
         {
             this.Text = menuText;
             this.DocumentType = docTypes;
@@ -36,7 +37,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// <param name="menuEnable">Menu enable method name</param>
         /// <param name="type">Entity to select</param>
         /// <param name="customNames">customNames</param>
-        public PopMenuItemAttribute(string menuText, swDocumentTypes_e docTypes, swSelectType_e selectionType, string callback = "", string hint = "", string menuEnable = "", string customNames = "")
+        public PopMenuItemAttribute(string menuText, DocumentTypes_e docTypes, swSelectType_e selectionType, string callback = "", string hint = "", string menuEnable = "", string customNames = "")
         {
             this.Text = menuText;
             this.DocumentType = docTypes;
@@ -59,7 +60,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// <value>
         /// The type of the document.
         /// </value>
-        public swDocumentTypes_e DocumentType { get; set; }
+        public DocumentTypes_e DocumentType { get; set; }
 
         /// <summary>
         /// Gets or sets the menu item. Menu item string ( e.g., "menuItem@menuString"); SOLIDWORKS creates menu items only if they do not already exist

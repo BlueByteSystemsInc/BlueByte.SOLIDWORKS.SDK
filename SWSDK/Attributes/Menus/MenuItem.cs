@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.swconst;
+﻿using BlueByte.SOLIDWORKS.SDK.Core.Enums;
+using SolidWorks.Interop.swconst;
 using System;
 
 namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
@@ -16,28 +17,20 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// </summary>
         /// <param name="menuText">The menu text.</param>
         /// <param name="docTypes">The document types.</param>
-        /// <param name="isTopLevelMenu">True if the item is a top level menu, false, if it is a menu item</param>
         /// <param name="callback">The callback.</param>
         /// <param name="bmpFileNameInResources">name of the bmp in the resources of the add-in project including the bmp extension.</param> 
         /// <remarks>Add images to the project level and set their build action to embed resource. Size is 20x20, 32x32, 40x40, 64x64, 96x96 or 128x128</remarks>
-        public MenuItemAttribute(string menuText, swDocumentTypes_e docTypes, bool isTopLevelMenu = true, string callback = "", string bmpFileNameInResources = "")
+        public MenuItemAttribute(string menuText, DocumentTypes_e docTypes, string callback = "", string bmpFileNameInResources = "")
         {
             this.Text = menuText;
             this.DocumentType = docTypes;
             this.Callback = callback;
-            this.IsTopLevelMenu = isTopLevelMenu;
             this.BmpFileNameInResources = bmpFileNameInResources;
         }
 
         #region properties 
 
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is menu item.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is menu item; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsTopLevelMenu { get; set; }
+         
 
         /// <summary>
         /// Document type to which to add the menu item as defined by swDocumentTypes_e.
@@ -45,7 +38,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Attributes.Menus
         /// <value>
         /// The type of the document.
         /// </value>
-        public swDocumentTypes_e DocumentType { get; set; }
+        public DocumentTypes_e DocumentType { get; set; }
 
         /// <summary>
         /// Gets or sets the menu item. Menu item string ( e.g., "menuItem@menuString"); SOLIDWORKS creates menu items only if they do not already exist

@@ -258,14 +258,14 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         #region Public Methods
 
-        public IDocument AddUnloadedDocument(string fileName)
+        public IDocument AddUnloadedDocument(string fileName, bool isRoot)
         {
 
             
 
             var _document = Document.New(null, fileName);
             if (_document.DocumentType == swDocumentTypes_e.swDocASSEMBLY)
-                _document = new Document(null, fileName);
+                _document = new Assembly(null, fileName, isRoot);
 
             if (_document.IsLoaded)
                 throw new Exception("Attempted to add a loaded document");

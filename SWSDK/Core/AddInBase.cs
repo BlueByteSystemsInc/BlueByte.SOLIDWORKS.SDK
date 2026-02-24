@@ -1,11 +1,13 @@
 ﻿using BlueByte.SOLIDWORKS.SDK.Attributes;
 using BlueByte.SOLIDWORKS.SDK.Attributes.Menus;
 using BlueByte.SOLIDWORKS.SDK.Core.Documents;
+using BlueByte.SOLIDWORKS.SDK.Core.Enums;
 using BlueByte.SOLIDWORKS.SDK.Diagnostics;
 using BlueByte.SOLIDWORKS.SDK.UI;
 using Microsoft.Win32;
 using SimpleInjector;
 using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
@@ -251,41 +253,111 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
         }
 
         Tuple<int, int, string, string>[] menuIds = default(Tuple<int, int, string,string>[]);
-       private void BuildMenu()
+        private void BuildMenu()
         {
-            var menuIdsList = new List<Tuple<int, int, string, string>>();
-            var menuItems = AttributeHelper.GetAttributes<MenuItemAttribute>(this);
-            if (menuItems != null)
+            var swApp = this.Application.As<SldWorks>();
+
+            var menuIdsList =
+                new List<Tuple<int, int, string, string>>();
+
+            var createdMenus =
+                new Dictionary<string, int>(
+                    StringComparer.OrdinalIgnoreCase);
+
+            var menuItems =
+                AttributeHelper.GetAttributes<MenuItemAttribute>(this);
+
+            if (menuItems == null)
+                return;
+
+            foreach (var menu in menuItems)
             {
+                #region Image
 
-             
+                var imagePath = string.Empty;
 
-                foreach (var menu in menuItems)
+                if (!string.IsNullOrWhiteSpace(menu.BmpFileNameInResources))
                 {
-                    #region save images locally 
+                    imagePath =
+                        handler.CreateFileFromResourceBitmap(
+                            menu.BmpFileNameInResources,
+                            this.GetType().Assembly);
+                }
 
-                    var imagePath = string.Empty;
+                #endregion
 
-   
+                var value =
+                    (DocumentTypes_e)menu.DocumentType;
 
-                    if (string.IsNullOrWhiteSpace(menu.BmpFileNameInResources) == false)
-                        imagePath = handler.CreateFileFromResourceBitmap(menu.BmpFileNameInResources, this.GetType().Assembly);
+                foreach (DocumentTypes_e docType
+                    in Enum.GetValues(typeof(DocumentTypes_e)))
+                {
 
-                    #endregion 
+                    if (!value.HasFlag(docType))
+                        continue;
 
+                    var parts =
+                        menu.Text
+                        .Trim('\\')
+                        .Split('\\');
 
-                    if (menu.IsTopLevelMenu)
-                        menuIdsList.Add(new Tuple<int, int,string,string>(this.Application.As<SldWorks>().AddMenu((int)menu.DocumentType, menu.Text, menu.Position), (int)menu.DocumentType, menu.Text, string.Empty));
-                    else
-                        menuIdsList.Add(new Tuple<int, int, string, string>(this.Application.As<SldWorks>().AddMenuItem4((int)menu.DocumentType, Cookie, menu.Text, menu.Position, menu.Callback, menu.MenuEnableState, menu.Hint, imagePath),(int)menu.DocumentType, menu.Text, string.Empty));
-                    
+                    string parentPath = null;
+
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        var current = parts[i];
+
+                        var fullPath =
+                            parentPath == null
+                            ? current
+                            : current + "@" + parentPath;
+
+                        if (!createdMenus.ContainsKey(fullPath))
+                        {
+                            int id;
+
+                            bool isLast =
+                                i == parts.Length - 1;
+
+                            if (isLast)
+                            {
+                                id =
+                                    swApp.AddMenuItem4(
+                                        (int)docType,
+                                        Cookie,
+                                        fullPath,
+                                        menu.Position,
+                                        menu.Callback,
+                                        menu.MenuEnableState,
+                                        menu.Hint,
+                                        imagePath);
+                            }
+                            else
+                            {
+                                id =
+                                    swApp.AddMenu(
+                                        (int)docType,
+                                        fullPath,
+                                        menu.Position);
+                            }
+
+                            createdMenus.Add(fullPath, id);
+
+                            menuIdsList.Add(
+                                new Tuple<int, int, string, string>(
+                                    id,
+                                    (int)docType,
+                                    fullPath,
+                                    parentPath ?? string.Empty));
+                        }
+
+                        parentPath = fullPath;
+                    }
                 }
             }
 
-
             menuIds = menuIdsList.ToArray();
         }
-
         Tuple<int, int, int, string, string, string>[] popMenuIds = default(Tuple<int, int, int, string, string, string>[]);
         private void BuildPopMenu()
         {
@@ -297,9 +369,22 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
 
                 foreach (var menu in menuItems)
-                    menuIdsList.Add(new Tuple<int, int, int, string, string, string>(this.Application.As<SldWorks>().AddMenuPopupItem3((int)menu.DocumentType, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Text, menu.CustomNames),(int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
+                {
+                    var value =
+                  (DocumentTypes_e)menu.DocumentType;
 
-                
+                    foreach (DocumentTypes_e docType
+                        in Enum.GetValues(typeof(DocumentTypes_e)))
+                    {
+
+                        if (!value.HasFlag(docType))
+                            continue;
+
+                        menuIdsList.Add(new Tuple<int, int, int, string, string, string>(this.Application.As<SldWorks>().AddMenuPopupItem3((int)value, Cookie, (int)menu.SelectionType, menu.Text, menu.Callback, menu.MenuEnableState, menu.Text, menu.CustomNames), (int)menu.DocumentType, (int)menu.SelectionType, menu.Text, menu.Callback, null));
+
+                    }
+
+                }
             }
 
 

@@ -102,7 +102,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
                 case swComponentSuppressionState_e.swComponentFullyLightweight:
                 case swComponentSuppressionState_e.swComponentInternalIdMismatch:
                 default:
-                    documentManager.AddUnloadedDocument(pathName);
+                    documentManager.AddUnloadedDocument(pathName, false);
                    break;
                
             }
