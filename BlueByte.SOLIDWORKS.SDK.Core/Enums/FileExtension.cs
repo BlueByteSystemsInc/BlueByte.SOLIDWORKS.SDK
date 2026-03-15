@@ -43,6 +43,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Enums
         dxf,
         iges,
         _3mf,
-        ifc
+        ifc,
+        _3pdf
     }
 }
