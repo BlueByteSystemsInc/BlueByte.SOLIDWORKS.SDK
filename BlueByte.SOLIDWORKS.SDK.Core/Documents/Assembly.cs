@@ -69,9 +69,15 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
             var modelDoc = UnSafeObject as ModelDoc2;
 
             if (modelDoc == null)
-                throw new InvalidOperationException($"{UnSafeObject} is not set or is not a valid assembly document.");
-            
+            {
 
+                this.IsLoaded = false;
+
+                return false;
+            }
+            else
+            {
+  
             var configuration = modelDoc.GetConfigurationByName(referencedConfiguration) as Configuration;
 
             if (configuration == null)
@@ -101,38 +107,45 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
                 }
                 
                 RootComponent.Children = components.ToArray();
-                
-            }
-            
 
+                    // recursively init components
+                    Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
 
-            // recursively init components
-            Action<Components.IComponent> traverse = default(Action<Components.IComponent>);
+                    traverse = (Components.IComponent component) => {
+                        var assembly = (component.Document as IAssembly);
+                        if (assembly != null)
+                        {
+                            if (assembly.RootComponent == null)
+                                assembly.Initialize(component.ReferencedConfiguration);
 
-            traverse = (Components.IComponent component) => {
-                var assembly = (component.Document as IAssembly);
-                if (assembly  != null)
-                {
-                    var cs = assembly.RootComponent.Children;
-                    if (cs != null)
-                    foreach (var c in cs)
-                    {
-                        c.Parent = assembly.RootComponent;
-                        var ret = c.Initialize();
-                        traverse(c);
-                    }
+                            if (assembly.RootComponent == null)
+                                return;
 
-                    if (assembly != null && assembly.RootComponent != null)
-                    component.Children = assembly.RootComponent.Children;
+                            var cs = assembly.RootComponent.Children;
+                            if (cs != null)
+                                foreach (var c in cs)
+                                {
+                                    c.Parent = assembly.RootComponent;
+                                    var ret = c.Initialize();
+                                    traverse(c);
+                                }
+
+                            if (assembly != null && assembly.RootComponent != null)
+                                component.Children = assembly.RootComponent.Children;
+                        }
+
+                    };
+
+                    traverse(this.RootComponent);
+
+                    return true;
+
                 }
-                
-            };
 
-            traverse(this.RootComponent);
 
-            return true;
+                return true;
         }
-
+        }
 
         /// <summary>
         /// Traverses the assembly component tree and do.
