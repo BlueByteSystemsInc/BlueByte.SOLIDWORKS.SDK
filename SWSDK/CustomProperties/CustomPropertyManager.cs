@@ -50,8 +50,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.CustomProperties
         private void Document_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(nameof(IDocument.IsLoaded)))
-            {
-                var document = e as IDocument;
+            { 
+                var document = sender as IDocument;
                 document.CustomPropertyManager = this;
             }
         }
