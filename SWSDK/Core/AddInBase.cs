@@ -403,7 +403,7 @@ namespace BlueByte.SOLIDWORKS.SDK.Core
 
                 Container.Options.EnableAutoVerification = false;
                
-                var assembly = Assembly.GetCallingAssembly();
+                var assembly = Assembly.GetExecutingAssembly();
 
                 switch (LoggerType)
                 {
