@@ -35,6 +35,8 @@ namespace BlueByte.SOLIDWORKS.SDK.Diagnostics
                 var version = $"{Version.Major}.{Version.Minor}.{Version.Revision}-{Version.Build}";
 
                 builder.AppendLine($"AddIn: {identity.Name}");
+                builder.AppendLine($"Machine: {Environment.MachineName}");
+                builder.AppendLine($"Win User: {Environment.UserName}");
                 builder.AppendLine($"Process : {System.Diagnostics.Process.GetCurrentProcess().ProcessName} - ID : {System.Diagnostics.Process.GetCurrentProcess().Id}");
                 builder.AppendLine($"Started logged at { DateTime.Now.ToString("yyyy-MM-dd-hh:mm:ss")}");
                 builder.AppendLine("==============");

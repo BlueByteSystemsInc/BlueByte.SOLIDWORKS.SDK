@@ -24,7 +24,18 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
         {
 
             var fileName = modelDoc2.GetTitle();
-            var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fileName);
+            var fileNameWithoutExtension = fileName;
+
+            // used in case there is in the file name
+            try
+            {
+                fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fileName);
+            }
+            catch (Exception)
+            {
+
+            }
+
 
             var type = (swDocumentTypes_e)modelDoc2.GetType();
 
@@ -541,8 +552,28 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents
 
         public bool Equals(string filename)
         {
-            var f = this.FileName;
-            return System.IO.Path.GetFileName(filename).Equals(System.IO.Path.GetFileName(f), StringComparison.OrdinalIgnoreCase);
+            var filenameToCompare = NormalizeFileName(filename);
+            var documentFileName = NormalizeFileName(this.FileName);
+
+            if (filenameToCompare == null || documentFileName == null)
+                return false;
+
+            return string.Equals(
+                filenameToCompare,
+                documentFileName,
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string NormalizeFileName(string filename)
+        {
+            if (string.IsNullOrWhiteSpace(filename))
+                return null;
+
+            var sanitizedPath = filename
+                .Replace("\"", string.Empty)
+                .Trim();
+
+            return System.IO.Path.GetFileName(sanitizedPath);
         }
 
         public virtual void DettachEventHandlers()
