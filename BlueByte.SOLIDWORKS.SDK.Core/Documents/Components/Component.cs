@@ -78,7 +78,12 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
                 return false;
 
 
-            var childrenComponents = (UnsafeObject as SolidWorks.Interop.sldworks.Component2).GetChildren() as object[];
+            var nativeComponent = UnsafeObject as SolidWorks.Interop.sldworks.Component2;
+            if (nativeComponent == null)
+                throw new InvalidOperationException("Cannot read assembly component '" + PathName + "': SOLIDWORKS component is unavailable.");
+            var childrenComponents = nativeComponent.GetChildren() as object[] ?? new object[0];
+            // Reinitialization must replace the tree, not duplicate its children.
+            Children = new IComponent[0];
 
 
             foreach (var child in childrenComponents)

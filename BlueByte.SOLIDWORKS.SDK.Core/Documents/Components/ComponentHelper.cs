@@ -94,8 +94,13 @@ namespace BlueByte.SOLIDWORKS.SDK.Core.Documents.Components
             {
                 case swComponentSuppressionState_e.swComponentFullyResolved:
                 case swComponentSuppressionState_e.swComponentResolved:
+                    var nativeModel = component.GetModelDoc2();
+                    if (nativeModel == null)
+                        throw new InvalidOperationException("Cannot read component '" + component.Name2 + "': its model is not loaded.");
                     if (document == null)
-                        documentManager.GetDocumentFromUnsafeObject(component.GetModelDoc2());
+                        documentManager.GetDocumentFromUnsafeObject(nativeModel);
+                    else if (!document.IsLoaded)
+                        document.Load(nativeModel);
                    break;
                 case swComponentSuppressionState_e.swComponentSuppressed:
                 case swComponentSuppressionState_e.swComponentLightweight:
